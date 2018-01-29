@@ -10,7 +10,7 @@ Description: This package has many functions which are used
     in <http://henryquant.blogspot.kr/> blog Quant posts.
 License: MIT + file LICENSE
 Encoding: UTF-8
-LazyData: false
+LazyData: true
 RoxygenNote: 6.0.1
 Imports:  xts,
           PerformanceAnalytics,

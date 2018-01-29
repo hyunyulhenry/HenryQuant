@@ -12,8 +12,8 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: false
 RoxygenNote: 6.0.1
-Imports:
-  xts,
-  PerformanceAnalytics,
-  PortfolioAnalytics,
-  lubridate
+Imports:  xts,
+          PerformanceAnalytics,
+          PortfolioAnalytics,
+          lubridate
+ 

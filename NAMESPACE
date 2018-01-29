@@ -2,3 +2,7 @@
 
 export(ipak)
 export(yr_plot)
+importFrom(graphics,barplot)
+importFrom(graphics,legend)
+importFrom(utils,install.packages)
+importFrom(utils,installed.packages)

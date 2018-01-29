@@ -4,6 +4,7 @@
 #'
 #' @param Return Return Data
 #' @return Plot Yearly return
+#' @importFrom graphics barplot legend
 #' @examples
 #' \dontrun{
 #'   ret = asset_data
@@ -11,8 +12,8 @@
 #'   }
 #' @export
 yr_plot = function(Return) {
-  year_ret = as.data.frame(apply.yearly(Return, Return.cumulative))
-  rownames(year_ret) = year(rownames(year_ret))
+  year_ret = as.data.frame(xts::apply.yearly(Return, PerformanceAnalytics::Return.cumulative))
+  rownames(year_ret) = lubridate::year(rownames(year_ret))
   barplot(t(year_ret), col=1:ncol(Return), beside = TRUE, las = 2 )
   if (ncol(Return) > 1)
     legend('topright', colnames(Return), col=1:ncol(Return), lty=NA, lwd = 1, pch = c(15), cex = 0.8)

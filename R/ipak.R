@@ -4,6 +4,7 @@
 #'
 #' @param pkg List of packages to install.
 #' @return Download & Install packages
+#' @importFrom utils install.packages installed.packages
 #' @examples
 #' \dontrun{
 #'   pkg = c("PerformanceAnalytics", "quantmod")

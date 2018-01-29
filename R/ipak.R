@@ -12,8 +12,8 @@
 #'   }
 #' @export
 ipak = function(pkg){
-  new.pkg = pkg[!(pkg %in% utils::installed.packages()[, "Package"])]
+  new.pkg = pkg[!(pkg %in% installed.packages()[, "Package"])]
   if (length(new.pkg))
-    utils::install.packages(new.pkg, dependencies = TRUE)
+    install.packages(new.pkg, dependencies = TRUE)
   sapply(pkg, require, character.only = TRUE)
 }

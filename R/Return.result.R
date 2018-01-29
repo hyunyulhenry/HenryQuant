@@ -15,13 +15,11 @@
 #' @importFrom xts xts
 #' @importFrom zoo index
 #' @examples
-#' \dontrun{
 #'   ret = asset_data[,c(1,5)]
 #'   portfolio = Return.result(ret)
 #'   port_gross = portfolio$gross
 #'   port_net = portfolio$net
 #'   port_turnover = portfolio$turnover
-#' }
 #' @export
 Return.result = function(R, weight=NULL, fee = 0) {
 

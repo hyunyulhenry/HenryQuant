@@ -6,10 +6,8 @@
 #' @return Plot Yearly return
 #' @importFrom graphics barplot legend
 #' @examples
-#' \dontrun{
 #'   ret = asset_data
 #'   yr_plot(ret)
-#'   }
 #' @export
 yr_plot = function(Return) {
   year_ret = as.data.frame(xts::apply.yearly(Return, PerformanceAnalytics::Return.cumulative))

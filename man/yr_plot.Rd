@@ -16,8 +16,6 @@ Plot Yearly return
 yr_plot function will plot yearly return. It require "lubridate" package.
 }
 \examples{
-\dontrun{
   ret = asset_data
   yr_plot(ret)
-  }
 }

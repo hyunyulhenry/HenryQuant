@@ -25,11 +25,9 @@ this function calculates the returns of a portfolio with the
 Gross Return, Net Return (after fee), and Turnover of Portfolio.
 }
 \examples{
-\dontrun{
   ret = asset_data[,c(1,5)]
   portfolio = Return.result(ret)
   port_gross = portfolio$gross
   port_net = portfolio$net
   port_turnover = portfolio$turnover
-}
 }

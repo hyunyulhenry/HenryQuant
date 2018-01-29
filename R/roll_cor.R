@@ -12,10 +12,8 @@
 #' @importFrom zoo rollapply
 #' @importFrom stats na.omit cor time
 #' @examples
-#' \dontrun{
 #'   ret = asset_data[,c(1,5)]
 #'   roll_cor(ret[,1], ret[,2], width = 360)
-#' }
 #' @export
 
 roll_cor = function(Ra, Rb, width) {

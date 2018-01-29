@@ -21,8 +21,6 @@ return of two assets.
 This Package is based on PerformanceAnalytics
 }
 \examples{
-\dontrun{
   ret = asset_data[,c(1,5)]
   roll_cor(ret[,1], ret[,2], width = 360)
-}
 }

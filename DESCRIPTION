@@ -17,5 +17,6 @@ Imports:  xts,
           PortfolioAnalytics,
           lubridate,
           stats,
-          zoo
+          zoo,
+          dplyr
  

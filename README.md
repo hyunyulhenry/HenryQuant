@@ -1,7 +1,7 @@
 # HenryQuant
 ===================
 
-[Henry' Quantopia](http://henryquant.blogspot.kr/){:target="_blank"}
+http://henryquant.blogspot.kr/
 
 제가 쓰려고 만든
 퀀트 백테스팅용 패키지 입니다. 

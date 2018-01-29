@@ -15,5 +15,7 @@ RoxygenNote: 6.0.1
 Imports:  xts,
           PerformanceAnalytics,
           PortfolioAnalytics,
-          lubridate
+          lubridate,
+          stats,
+          zoo
  

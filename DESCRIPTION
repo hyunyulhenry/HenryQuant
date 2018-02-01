@@ -5,13 +5,13 @@ Date: 2018-01-29
 Title: Favorite R Functions for Henry's Quantopia <http://henryquant.blogspot.kr/>
 Authors@R: c(person("Henry", "Lee", role = c("aut", "cre"),
                      email = "leebisu@gmail.com"))
-Depends: R(>= 3.4.1)
 Description: This package has many functions which are used
     in <http://henryquant.blogspot.kr/> blog Quant posts.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.0.1
+Depends: R(>= 3.1.2)
 Imports:  xts,
           PerformanceAnalytics,
           PortfolioAnalytics,

@@ -16,11 +16,10 @@ Save financial statement data for all listed firms
 }
 \description{
 This function will Download all listed firms financial statement data,
-usually data for the last 10 years
+usually data for the last 20 years
 }
 \details{
 It needs "rvest" and "stringi" package.
-Scraps from http://www.sejongdata.com
 }
 \examples{
 \dontrun{

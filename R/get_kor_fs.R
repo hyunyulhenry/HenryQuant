@@ -1,10 +1,9 @@
 #' Download all listed firms financial statement data in korea markets
 #'
 #' This function will Download all listed firms financial statement data,
-#' usually data for the last 10 years
+#' usually data for the last 20 years
 #'
 #' It needs "rvest" and "stringi" package.
-#' Scraps from http://www.sejongdata.com
 #'
 #' @param folder_name Where you want the downloaded information to be stored
 #' @param sleep_time Sleep time when downloading data

@@ -17,5 +17,9 @@ Imports:  xts, PerformanceAnalytics,
           lubridate,
           stats,
           zoo,
-          dplyr
+          dplyr,
+          magrittr,
+          xml2,
+          rvest,
+          stringi
  

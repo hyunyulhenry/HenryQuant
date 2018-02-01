@@ -10,8 +10,10 @@
 #' @importFrom xts as.xts endpoints
 #' @importFrom zoo index
 #' @examples
+#' \dontrun{
 #'   ret = asset_data
 #'   reb_time = reb_point(ret, "1994-12-31", "2016-12-31", 3)
+#'   }
 #' @export
 reb_point = function(R, start, end, period) {
   R = as.xts(R)

@@ -20,6 +20,8 @@ This function will return rebalacing period, from START to END by REBALANCING PE
 START and END need specific date and Period shold be number.
 }
 \examples{
+\dontrun{
   ret = asset_data
   reb_time = reb_point(ret, "1994-12-31", "2016-12-31", 3)
+  }
 }

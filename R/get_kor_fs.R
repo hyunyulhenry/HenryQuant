@@ -7,7 +7,7 @@
 #' Scraps from http://www.sejongdata.com
 #'
 #' @param folder_name Where you want the downloaded information to be stored
-#' @param sleep Sleep time when downloading data
+#' @param sleep_time Sleep time when downloading data
 #' @return Save financial statement data for all listed firms
 
 #' @importFrom magrittr "%>%"
@@ -18,7 +18,7 @@
 #'
 #' @examples
 #' \dontrun{
-#'   get_kor_fs(folder_name = "KoreaFS", sleep = 2)
+#'   get_kor_fs(folder_name = "KoreaFS", sleep_time = 1)
 #'   }
 #' @export
 
@@ -49,7 +49,6 @@ get_kor_fs = function(folder_name = "KoreaFS", sleep_time = 1) {
         temp = get_Table(url)
         temp = data.frame(country=Data_scrap[i,2],temp)
         temp[, 2] = substr(temp[,2], 1,4)
-        ro = nrow(temp)
 
         dataAll = rbind(dataAll,temp)
       }

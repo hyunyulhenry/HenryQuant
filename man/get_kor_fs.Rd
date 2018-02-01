@@ -4,12 +4,12 @@
 \alias{get_kor_fs}
 \title{Download all listed firms financial statement data in korea markets}
 \usage{
-get_kor_fs(folder_name = "KoreaFS", sleep = 1)
+get_kor_fs(folder_name = "KoreaFS", sleep_time = 1)
 }
 \arguments{
 \item{folder_name}{Where you want the downloaded information to be stored}
 
-\item{sleep}{Sleep time when downloading data}
+\item{sleep_time}{Sleep time when downloading data}
 }
 \value{
 Save financial statement data for all listed firms
@@ -24,6 +24,6 @@ Scraps from http://www.sejongdata.com
 }
 \examples{
 \dontrun{
-  get_kor_fs(folder_name = "KoreaFS", sleep = 2)
+  get_kor_fs(folder_name = "KoreaFS", sleep_time = 1)
   }
 }

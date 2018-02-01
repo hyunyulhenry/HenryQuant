@@ -9,8 +9,8 @@
 #'
 #' @param url "http://www.sejongdata.com/query/value.html"
 
-#' @importFrom xml2 read_html read_html
 #' @importFrom magrittr "%>%"
+#' @importFrom xml2 read_html
 #' @importFrom rvest html_nodes html_text
 #' @importFrom stringi stri_trim_both stri_trim_both
 #' @importFrom utils write.csv

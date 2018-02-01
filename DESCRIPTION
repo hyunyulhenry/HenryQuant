@@ -12,15 +12,14 @@ Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.0.1
 Depends: R(>= 3.1.2)
-Imports:  xts,
-          PerformanceAnalytics,
-          PortfolioAnalytics,
-          lubridate,
-          stats,
-          zoo,
-          dplyr,
-          magrittr,
-          xml2,
-          rvest,
-          stringi
- 
+Imports: xts,
+    PerformanceAnalytics,
+    PortfolioAnalytics,
+    lubridate,
+    stats,
+    zoo,
+    dplyr,
+    magrittr,
+    rvest,
+    stringi,
+    xml2

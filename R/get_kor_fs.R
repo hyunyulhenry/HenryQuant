@@ -10,8 +10,8 @@
 #' @param sleep Sleep time when downloading data
 #' @return Save financial statement data for all listed firms
 
-#' @importFrom xml2 read_html read_html
 #' @importFrom magrittr "%>%"
+#' @importFrom xml2 read_html
 #' @importFrom rvest html_nodes html_text
 #' @importFrom stringi stri_trim_both
 #' @importFrom utils write.csv

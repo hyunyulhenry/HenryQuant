@@ -23,7 +23,7 @@
 
 get_Table <- function(url=url){
 
-  temp = read_html(url,encoding = "UTF-8")
+  temp = xml2::read_html(url,encoding = "UTF-8")
   data = temp %>% html_nodes(".bus_board_txt1") %>% html_text
   item = temp %>% html_nodes('.bus_board_tit1') %>% html_text
 

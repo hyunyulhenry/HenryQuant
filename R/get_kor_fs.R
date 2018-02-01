@@ -22,7 +22,7 @@
 #'   }
 #' @export
 
-get_kor_fs = function(folder_name = "KoreaFS", sleep = 1) {
+get_kor_fs = function(folder_name = "KoreaFS", sleep_time = 1) {
 
   url = "http://www.sejongdata.com/query/value.html"
 
@@ -55,10 +55,10 @@ get_kor_fs = function(folder_name = "KoreaFS", sleep = 1) {
       }
 
       write.csv(dataAll,paste0(getwd(),"/",folder_name,"/",Data_scrap[i,1],"_",Data_scrap[i,2],".csv"))
-      print(paste0(dataAll$country[1]," ",round(i / 2314 * 100,3),"%"))
+      print(paste0(dataAll$country[1]," ",round(i / nrow(Data_scrap) * 100,2),"%"))
 
     }, error = function(e){})
-    Sys.sleep(sleep)
+    Sys.sleep(sleep_time)
   }
 }
 

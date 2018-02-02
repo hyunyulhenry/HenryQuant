@@ -22,4 +22,5 @@ Imports: xts,
     magrittr,
     rvest,
     stringi,
-    xml2
+    xml2,
+    quantmod

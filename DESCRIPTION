@@ -1,7 +1,7 @@
 Package: HenryQuant
 Type: Package
-Version: 0.1.0
-Date: 2018-01-29
+Version: 0.2.0
+Date: 2018-02-03
 Title: Favorite R Functions for Henry's Quantopia <http://henryquant.blogspot.kr/>
 Authors@R: c(person("Henry", "Lee", role = c("aut", "cre"),
                      email = "leebisu@gmail.com"))

@@ -37,6 +37,9 @@ get_kor_fs = function(folder_name = "KoreaFS", sleep_time = 1) {
   ifelse(dir.exists(folder_name), FALSE, dir.create(folder_name))
 
   for(i in 1 : nrow(Data_scrap)) {
+    if(file.exists(paste0(getwd(),"/",folder_name,"/",Data_scrap[i,1],"_",Data_scrap[i,2],".csv")) == TRUE){
+      next
+    } else {
 
     dataAll = c()
 
@@ -56,6 +59,8 @@ get_kor_fs = function(folder_name = "KoreaFS", sleep_time = 1) {
       print(paste0(dataAll$country[1]," ",round(i / nrow(Data_scrap) * 100,2),"%"))
 
     }, error = function(e){})
+    }
+
     Sys.sleep(sleep_time)
   }
 }

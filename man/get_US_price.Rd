@@ -20,10 +20,11 @@ This function will Download all listed firm's price in US Markets.
 If the source is "yahoo", it will download Adjsted price,
 and if source is "google", it will download normal price
 
-It will aumomatically save price for csv types
+It will aumomatically save individual stock prices and
+combined prices for csv types
 }
 \examples{
 \dontrun{
- get_US_price(src = "yahoo")
+ US_price = get_US_price(src = "yahoo")
  }
 }

@@ -20,7 +20,6 @@
 #'   get_kor_fs(folder_name = "Korea_FS", sleep = 2)
 #'   }
 #' @export
-
 get_Table <- function(url=url){
 
   temp = xml2::read_html(url,encoding = "UTF-8")

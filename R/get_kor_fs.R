@@ -5,8 +5,6 @@
 #'
 #' It needs "rvest" and "stringi" package.
 #'
-#' @param folder_name Where you want the downloaded information to be stored
-#' @param sleep_time Sleep time when downloading data
 #' @return Save financial statement data for all listed firms
 
 #' @importFrom magrittr "%>%"
@@ -17,27 +15,18 @@
 #'
 #' @examples
 #' \dontrun{
-#'   get_kor_fs(folder_name = "KoreaFS", sleep_time = 1)
+#'   get_kor_fs()
 #'   }
 #' @export
+get_KOR_fs = function() {
 
-get_kor_fs = function(folder_name = "KoreaFS", sleep_time = 1) {
-
-  url = "http://www.sejongdata.com/query/value.html"
-
-  temp = xml2::read_html(url,encoding = "UTF-8")
-  data = temp %>% html_nodes(".bus_board_txt1") %>% html_text
-  item = temp %>% html_nodes('.bus_board_tit1') %>% html_text
-
-  Data_scrap = data.frame(matrix(data ,ncol=5, byrow=T))
-  names(Data_scrap) = item
-  Data_scrap = Data_scrap[,c(1,2)]
-  rm(data, item, temp, url)
+  folder_name = "Korea_fs"
+  ticker = get_KOR_ticker()
 
   ifelse(dir.exists(folder_name), FALSE, dir.create(folder_name))
 
-  for(i in 1 : nrow(Data_scrap)) {
-    if(file.exists(paste0(getwd(),"/",folder_name,"/",Data_scrap[i,1],"_",Data_scrap[i,2],".csv")) == TRUE){
+  for(i in 1 : nrow(ticker)) {
+    if(file.exists(paste0(getwd(),"/",folder_name,"/",ticker[i,1],"_",ticker[i,2],"_fs.csv")) == TRUE){
       next
     } else {
 
@@ -47,21 +36,21 @@ get_kor_fs = function(folder_name = "KoreaFS", sleep_time = 1) {
 
       for(j in 1 : 2) {
         url = paste0("http://www.sejongdata.com/business_include_fr/table_main0_bus_01.html?no=",
-                     Data_scrap[i,1],"&gubun=",j)
+                     ticker[i,1],"&gubun=",j)
         temp = get_Table(url)
-        temp = data.frame(country=Data_scrap[i,2],temp)
+        temp = data.frame(country=ticker[i,2],temp)
         temp[, 2] = substr(temp[,2], 1,4)
 
         dataAll = rbind(dataAll,temp)
       }
 
-      write.csv(dataAll,paste0(getwd(),"/",folder_name,"/",Data_scrap[i,1],"_",Data_scrap[i,2],".csv"))
-      print(paste0(dataAll$country[1]," ",round(i / nrow(Data_scrap) * 100,2),"%"))
+      write.csv(dataAll,paste0(getwd(),"/",folder_name,"/",ticker[i,1],"_",ticker[i,2],"_fs.csv"))
+      print(paste0(dataAll$country[1]," ",round(i / nrow(ticker) * 100,2),"%"))
 
     }, error = function(e){})
     }
 
-    Sys.sleep(sleep_time)
+    Sys.sleep(1)
   }
 }
 

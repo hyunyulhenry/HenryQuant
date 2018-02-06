@@ -10,7 +10,6 @@
 #'  get_US_ticker()
 #'  }
 #' @export
-
 get_US_ticker = function() {
 
   url_NYSE = "http://www.nasdaq.com/screening/companies-by-name.aspx?letter=0&exchange=nyse&render=download"
@@ -32,7 +31,7 @@ get_US_ticker = function() {
   temp$Symbol = gsub(" ", "", temp$Symbol)
 
   result = cbind(temp$Symbol, temp$Name, temp$Sector)
-  write.csv(result, "ticker_list.csv")
+  write.csv(result, "ticker_list_US.csv")
 
   file.remove("./url_NYSE.csv")
   file.remove("./url_NASDAQ.csv")

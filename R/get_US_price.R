@@ -21,7 +21,6 @@
 #'  US_price = get_US_price(src = "yahoo")
 #'  }
 #' @export
-
 get_US_price = function(src = "yahoo") {
 
   ifelse(dir.exists("US_price"), FALSE, dir.create("US_price"))
@@ -29,7 +28,7 @@ get_US_price = function(src = "yahoo") {
 
   for(i in 1: nrow(ticker) ) {
 
-  if(file.exists(paste0(getwd(),"/","US_price","/",ticker[i,1],".csv")) == TRUE){
+  if(file.exists(paste0(getwd(),"/","US_price","/",ticker[i,1],"_price.csv")) == TRUE){
     next
   } else {
 
@@ -45,7 +44,7 @@ get_US_price = function(src = "yahoo") {
       }
       price = na.locf(price)
 
-      write.csv(as.matrix(price),paste0(getwd(),"/","US_price","/",ticker[i,1],".csv"))
+      write.csv(as.matrix(price),paste0(getwd(),"/","US_price","/",ticker[i,1],"_price.csv"))
       print(paste0(ticker[i, 1]," ",ticker[i,2]," ",round(i / nrow(ticker) * 100,3),"%"))
 
     }, error = function(e){})
@@ -57,7 +56,7 @@ get_US_price = function(src = "yahoo") {
   price_list = list()
   for (i in 1 : nrow(ticker)){
     tryCatch({
-    price_list[[i]] = as.xts(read.csv(paste0(getwd(),"/","US_price","/",ticker[i,1],".csv"), row.names = 1), drop.time = TRUE)
+    price_list[[i]] = as.xts(read.csv(paste0(getwd(),"/","US_price","/",ticker[i,1],"_price.csv"), row.names = 1), drop.time = TRUE)
     }, error = function(e){})
   }
 

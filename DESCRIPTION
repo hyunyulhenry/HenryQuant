@@ -23,4 +23,5 @@ Imports: xts,
     rvest,
     stringi,
     xml2,
-    quantmod
+    quantmod,
+    tibble

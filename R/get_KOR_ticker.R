@@ -1,7 +1,6 @@
 #' Download all listed firm's ticker in KOREA Markets.
 #'
 #' This function will Download all listed firm's ticker, name in KOR Markets.
-
 #' @return ticker, name
 #' @importFrom utils download.file read.csv
 #' @examples

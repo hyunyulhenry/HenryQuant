@@ -15,6 +15,6 @@ It will arrange fs data by account for list type, and save csv file.
 }
 \examples{
 \dontrun{
- arrange_fs = arrange_US_fs()
+ US_fs = arrange_US_fs()
  }
 }

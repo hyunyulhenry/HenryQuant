@@ -8,7 +8,7 @@
 #' @importFrom tibble column_to_rownames
 #' @examples
 #' \dontrun{
-#'  arrange_fs = arrange_US_fs()
+#'  US_fs = arrange_US_fs()
 #'  }
 #' @export
 arrange_US_fs = function() {

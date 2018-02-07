@@ -1,6 +1,6 @@
 #' Arrange all listed firm's financial statement data in US Markets.
-#' You should be execute get_US_fs function first to download financial statement data.
 #'
+#' You should be execute get_US_fs function first to download financial statement data.
 #' It will arrange fs data by account for list type, and save csv file.
 #' @return arranged financial statement data by account
 #' @importFrom utils read.csv write.csv

@@ -46,7 +46,7 @@ get_US_fs = function() {
     if(file.exists(paste0(getwd(),"/",fs_name,"/",ticker[i,1],"_fs.csv")) == TRUE){
       print(paste0("Already FS of ",ticker[i,1]," is downloaded"))
     } else {
-      temp_FS = temp_BS = temp_IS = temp_CF = c()
+      temp_FS = temp_BS = temp_IS = temp_CF = FS_data = c()
 
       tryCatch({
       temp_FS = getFinancials(ticker[i, 1], auto.assign = "FALSE")

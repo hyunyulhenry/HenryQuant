@@ -32,6 +32,7 @@ get_US_price = function(src = "yahoo") {
     next
   } else {
 
+    price = c()
     tryCatch({
 
       price = getSymbols(ticker[i, 1], src=src, auto.assign = FALSE)

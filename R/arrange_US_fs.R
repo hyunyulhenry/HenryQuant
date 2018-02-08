@@ -6,6 +6,7 @@
 #' @importFrom utils read.csv write.csv
 #' @importFrom magrittr "%>%" set_colnames set_rownames
 #' @importFrom tibble column_to_rownames
+#' @importFrom dplyr bind_rows
 #' @examples
 #' \dontrun{
 #'  US_fs = arrange_US_fs()
@@ -41,16 +42,18 @@ arrange_US_fs = function() {
       colnames(temp) = fs_colnames
     }, error = function(e){})
 
-  for (j in 1 : m) {
-    if (i == 1) {
-      fs_list[[j]] = temp[j, ] %>% set_rownames(ticker[i, 1])
+    for (j in 1 : m) {
+      if (i == 1) {
+        fs_list[[j]] = temp[j, ]
       } else {
-      fs_list[[j]] = rbind(fs_list[[j]], temp[j, ] %>% set_rownames(ticker[i, 1]))
+        fs_list[[j]] = bind_rows(fs_list[[j]], temp[j, ])
       }
     }
 
     if ((i %% 50) == 0) { print(paste0(round((i / nrow(ticker)) * 100,2)," %")) }
   }
+
+  fs_list = lapply(fs_list, function(x) {row.names(x) = ticker[,1]; x})
   names(fs_list) = fs_account
   write.csv(fs_list, "fs_list_US.csv")
   return(fs_list)

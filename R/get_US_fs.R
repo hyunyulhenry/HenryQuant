@@ -88,10 +88,10 @@ get_US_fs = function() {
 
   value_list = list()
   for (i in 1 : nrow(ticker)){
-    tryCatch({
-      value_list[[i]] = read.csv(paste0(getwd(),"/",value_name,"/",ticker[i,1],"_value.csv"), row.names = 1)
-    }, error = function(e){})
+    value_list[[i]] = read.csv(paste0(getwd(),"/",value_name,"/",ticker[i,1],"_value.csv"), row.names = 1) %>%
+    set_rownames(ticker[i, 1])
   }
+
 
   value_list = do.call(rbind, value_list)
   write.csv(value_list,paste0(getwd(),"/","value_list.csv"))

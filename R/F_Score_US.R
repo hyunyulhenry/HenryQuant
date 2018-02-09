@@ -1,8 +1,8 @@
 #' Calcaulte F-Score of US Firm
 #'
-#' You should be execute get_US_fs and arrange_US_fs function first.
-#' @param name the name of arranged Financial statement Data.
-#' Result of arrange_US_fs function is US_fs.
+#' You should be execute get_US_fs and arrange_US_fs function first
+#' @param name the name of arranged Financial statement Data
+#' Result of arrange_US_fs function is US_fs
 #' @return All listed firm's F-Score
 #' @importFrom magrittr "%>%" set_colnames set_rownames
 #' @examples

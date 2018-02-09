@@ -7,14 +7,14 @@
 F_Score_US(name)
 }
 \arguments{
-\item{name}{the name of arranged Financial statement Data.
-Result of arrange_US_fs function is US_fs.}
+\item{name}{the name of arranged Financial statement Data
+Result of arrange_US_fs function is US_fs}
 }
 \value{
 All listed firm's F-Score
 }
 \description{
-You should be execute get_US_fs and arrange_US_fs function first.
+You should be execute get_US_fs and arrange_US_fs function first
 }
 \examples{
 \dontrun{

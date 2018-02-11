@@ -24,4 +24,5 @@ Imports: xts,
     stringi,
     xml2,
     quantmod,
-    tibble
+    tibble,
+    readr

@@ -51,7 +51,7 @@ french_library = function() {
   data = as.xts(data, order.by=as.Date(datestoformat))
   file.remove(paste0(getwd(),"/",folder_name,"/",file_list))
 
-  print(library_list[select_factor, 1])
+  print(as.character(library_list[select_factor, 1]))
   return(data)
 
 }

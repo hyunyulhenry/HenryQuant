@@ -32,6 +32,7 @@ returns a time series of returns weighted by the \code{weights}, applied loss cu
 \description{
 If specific assets exceed the Loss Cut limit before rebalancing,
 sell all of its assets that exceed the cut point.
+Frequency of return should be shorter than frequency of weights.#'
 }
 \examples{
 \dontrun{

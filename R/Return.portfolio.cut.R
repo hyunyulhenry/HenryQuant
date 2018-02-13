@@ -2,6 +2,7 @@
 #'
 #' If specific assets exceed the Loss Cut limit before rebalancing,
 #' sell all of its assets that exceed the cut point.
+#' Frequency of return should be shorter than frequency of weights.#'
 #'
 #' @param R An xts, vector, matrix, data frame, timeSeries or zoo object of
 #' asset returns

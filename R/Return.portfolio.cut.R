@@ -23,13 +23,14 @@
 #' Return.portfolio.cut(edhec["1997",1:5], rebalance_on="quarters", loss_cut = -0.10)
 #' }
 #' @export
-Return.portfolio.cut <- Return.rebalancing <- function(R,
-                                                       weights=NULL,
-                                                       loss_cut=-10,
-                                                       rebalance_on=c(NA, 'years', 'quarters', 'months', 'weeks', 'days'),
-                                                       value=1,
-                                                       verbose=FALSE,
-                                                       ...){
+Return.portfolio.cut <- function(R,
+                                 weights=NULL,
+                                 loss_cut=-10,
+                                 rebalance_on=c(NA, 'years', 'quarters', 'months', 'weeks', 'days'),
+                                 value=1,
+                                 verbose=FALSE,
+                                 ...){
+
   R = checkData(R, method="xts")
   rebalance_on = rebalance_on[1]
 

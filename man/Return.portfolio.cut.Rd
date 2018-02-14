@@ -37,6 +37,6 @@ Frequency of return should be shorter than frequency of weights.#'
 \examples{
 \dontrun{
 data(edhec)
-Return.portfolio.cut(edhec["1997",1:5], rebalance_on="quarters", lost_cut = -0.10)
+Return.portfolio.cut(edhec["1997",1:5], rebalance_on="quarters", loss_cut = -0.10)
 }
 }

@@ -2,7 +2,7 @@
 
 export(F_Score_US)
 export(F_Score_value_US)
-export(Return.portfolio.cut)
+export(Return.cut)
 export(Return.result)
 export(Return.stats)
 export(arrange_US_fs)

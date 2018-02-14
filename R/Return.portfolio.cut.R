@@ -125,7 +125,13 @@ Return.portfolio.cut <- Return.rebalancing <- function(R,
       to = as.Date(index(weights[(i+1),]))
     }
     returns = R[paste0(from, "::", to)]
-    ret_cum = cumprod(1+returns) - 1
+
+    # Make Cumulative Return
+    if (from > to) {
+      ret_cum = cumprod(1+returns[,1])
+    } else {
+      ret_cum = cumprod(1+returns) - 1
+    }
 
     # Only enter the loop if we have a valid returns object
     if(nrow(returns) >= 1){

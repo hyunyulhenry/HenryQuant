@@ -20,7 +20,7 @@
 #' @examples
 #' \dontrun{
 #' data(edhec)
-#' Return.portfolio.cut(edhec["1997",1:5], rebalance_on="quarters", lost_cut = -0.10)
+#' Return.portfolio.cut(edhec["1997",1:5], rebalance_on="quarters", loss_cut = -0.10)
 #' }
 #' @export
 Return.portfolio.cut <- Return.rebalancing <- function(R,

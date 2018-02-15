@@ -3,7 +3,9 @@
 #' This function solves for risk budge portfolio weights
 #' @param covmat Covariance matrix
 #' @param target Target of Risk Budget. The sum of budget should be 1
-#' @importFrom nloptr slsqp
+#' @param optctrl Object of class Rcpp_CTRL.
+#' @param ... Ellipsis argument is passed down to nlminb().
+#' @importFrom cccp ctrl rp getx
 #' @examples
 #' \dontrun{
 #'   ret = asset_data
@@ -13,52 +15,24 @@
 #'   weight = RiskBudget(covmat, target)
 #'   }
 #' @export
-RiskBudget = function(covmat, target) {
+RiskBudget = function (covmat, target, optctrl = ctrl(), ...){
 
-  target = as.numeric(target)
-  if (sum(target) != 1) {
-    warning("Sum of Risk Budget is not 1, Check it again")
+  if(!isSymmetric(covmat)){
+    stop("Matrix provided for Sigma is not symmetric.\n")
   }
+  N = ncol(covmat)
 
-  if ((ncol(covmat)) != length(target)) {
-    warning("Length of Covariance Matrix and Target is not same")
+  call = match.call()
+  ## calling rp() from cccp
+  opt = rp(x0 = target, P = covmat, mrc = target, optctrl = optctrl)
+  w = drop(getx(opt))
+  w = w / sum(w)
+
+  if(is.null(dimnames(covmat))){
+    names(w) = paste("Asset", 1:N, sep = "")
+  } else {
+    names(w) = colnames(covmat)
   }
-
-  #--- Risk Parity objective ---#
-  RiskBudget_objective = function(x) {
-
-    variance = t(x) %*% covmat %*% x
-    sigma = sqrt(variance)
-    MRC = (covmat %*% x) / as.numeric(sigma)
-
-    rc = x * MRC
-    rc = as.numeric(rc/sum(rc))
-
-    sum_risk_diff = sum( (rc - target)^2 )
-
-    return(sum_risk_diff)
-
-  }
-
-  #--- Inequality Objective ---#
-  hin.objective = function(x) {
-    return(x)
-  }
-
-  #--- Equality Objective ---#
-  heq.objective = function(x) {
-    return( sum(x) - 1 )
-  }
-
-  #--- Set Initial Seed (Equal Weight ---#
-  x0.equal = rep(1/ncol(covmat), ncol(covmat))
-
-  #--- Run Optimization ---#
-  result = slsqp( x0 = x0.equal, fn = RiskBudget_objective,
-                  hin = hin.objective,
-                  heq = heq.objective,
-                  control = list(xtol_rel = 1e-20, maxeval = 5000))
-
-  return(round(result$par,4))
-
+  return(w)
 }
+

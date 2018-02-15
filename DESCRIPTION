@@ -26,4 +26,4 @@ Imports: xts,
     quantmod,
     tibble,
     readr,
-    nloptr
+    cccp

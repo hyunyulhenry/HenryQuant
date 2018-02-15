@@ -4,12 +4,16 @@
 \alias{RiskBudget}
 \title{Risk Budget Portfolio}
 \usage{
-RiskBudget(covmat, target)
+RiskBudget(covmat, target, optctrl = ctrl(), ...)
 }
 \arguments{
 \item{covmat}{Covariance matrix}
 
 \item{target}{Target of Risk Budget. The sum of budget should be 1}
+
+\item{optctrl}{Object of class Rcpp_CTRL.}
+
+\item{...}{Ellipsis argument is passed down to nlminb().}
 }
 \description{
 This function solves for risk budge portfolio weights

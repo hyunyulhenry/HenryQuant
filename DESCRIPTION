@@ -25,4 +25,5 @@ Imports: xts,
     xml2,
     quantmod,
     tibble,
-    readr
+    readr,
+    nloptr

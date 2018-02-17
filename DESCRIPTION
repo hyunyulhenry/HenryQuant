@@ -26,4 +26,6 @@ Imports: xts,
     quantmod,
     tibble,
     readr,
-    cccp
+    cccp,
+    fBasics,
+    quadprog

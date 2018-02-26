@@ -6,6 +6,10 @@
 #' @param MaxWeight Maximum weight for market cap weighted portfolio.
 #' If not entered, twice the equal weight is applied
 #' @param type "VW" for value(cap) weight, "EW" for equal weight
+#' @examples
+#' \dontrun{
+#'   wt_normal(MarketCap, MaxWeight=0.05, type = "VW")
+#'   }
 #' @export
 wt_normal = function(MarketCap, MaxWeight = NULL, type = "VW") {
 

@@ -25,7 +25,7 @@ get_KOR_value = function() {
   ifelse(dir.exists(folder_name), FALSE, dir.create(folder_name))
 
   for(i in 1 : nrow(ticker)) {
-    if(file.exists(paste0(getwd(),"/",folder_name,"/",ticker[i,1],"_",ticker[i,2],"_fs.csv")) == TRUE){
+    if(file.exists(paste0(getwd(),"/",folder_name,"/",ticker[i,1],"_",ticker[i,2],"_value.csv")) == TRUE){
       next
     } else {
 

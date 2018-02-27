@@ -28,4 +28,5 @@ Imports: xts,
     readr,
     cccp,
     fBasics,
-    quadprog
+    quadprog,
+    httr

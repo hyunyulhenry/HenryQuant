@@ -32,10 +32,10 @@ ifelse(dir.exists(fs_name), FALSE, dir.create(fs_name))
   #--- Download VALUE ---#
 
   down_value = function(tick) {
-    tryCatch({
 
     txt = data.frame(matrix(0, ncol = 5)) %>% setNames(c("PER","12M PER", "Peer PER", "PBR", "Div Yield"))
 
+    tryCatch({
     url = paste0("http://comp.fnguide.com/SVO2/ASP/SVD_Main.asp?pGB=1&gicode=A",tick,"&cID=&MenuYn=Y&ReportGB=&NewMenuID=101&stkGb=701")
     temp = GET(url)
     temp = read_html(temp)
@@ -50,9 +50,8 @@ ifelse(dir.exists(fs_name), FALSE, dir.create(fs_name))
     txt = txt[c(35,75,121,173,218)]
     txt = data.frame(matrix(txt, ncol = 5)) %>% setNames(c("PER","12M PER", "Peer PER", "PBR", "Div Yield"))
 
-    write.csv(txt,paste0(getwd(),"/",value_name,"/",tick,"_value.csv"))
-
     }, error = function(e){})
+    write.csv(txt,paste0(getwd(),"/",value_name,"/",tick,"_value.csv"))
   }
 
   #--- Download FS ---#
@@ -75,9 +74,8 @@ ifelse(dir.exists(fs_name), FALSE, dir.create(fs_name))
 
       IS = IS[, 1:5]
       FS_data = rbind(BS, IS, CF)
-      write.csv(FS_data,paste0(getwd(),"/",fs_name,"/",tick,"_fs.csv"))
-
     }, error = function(e){})
+    write.csv(FS_data,paste0(getwd(),"/",fs_name,"/",tick,"_fs.csv"))
   }
 
   #--- Download Data ---#

@@ -3,8 +3,6 @@
 #' This function will Download all listed firms financial statement data,
 #' usually data for the last 20 years
 #'
-#' It needs "rvest" and "stringi" package.
-#'
 #' @return Save financial statement data for all listed firms
 
 #' @importFrom magrittr "%>%"
@@ -15,7 +13,7 @@
 #'
 #' @examples
 #' \dontrun{
-#'   get_kor_fs()
+#'   get_KOR_fs()
 #'   }
 #' @export
 get_KOR_fs = function() {

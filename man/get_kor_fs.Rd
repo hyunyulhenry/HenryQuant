@@ -13,11 +13,8 @@ Save financial statement data for all listed firms
 This function will Download all listed firms financial statement data,
 usually data for the last 20 years
 }
-\details{
-It needs "rvest" and "stringi" package.
-}
 \examples{
 \dontrun{
-  get_kor_fs()
+  get_KOR_fs()
   }
 }

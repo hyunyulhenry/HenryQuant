@@ -31,7 +31,7 @@ get_US_ticker = function() {
   temp$Symbol = gsub(" ", "", temp$Symbol)
 
   result = cbind(temp$Symbol, temp$Name, temp$Sector)
-  write.csv(result, "ticker_list_US.csv")
+  write.csv(result, "US_ticker_list.csv")
 
   file.remove("./url_NYSE.csv")
   file.remove("./url_NASDAQ.csv")

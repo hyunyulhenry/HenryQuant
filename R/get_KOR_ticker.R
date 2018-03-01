@@ -21,7 +21,7 @@ get_KOR_ticker = function() {
   ticker = ticker[,c(1,2)]
   rm(data, item, temp, url)
 
-  write.csv(ticker, "ticker_list_KOR.csv")
+  write.csv(ticker, "KOR_ticker_list.csv")
   return(ticker)
 
 }

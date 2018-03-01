@@ -21,7 +21,7 @@ F_Score_value_US = function(name, score = c(8, 9), n = 30) {
   }
 
   fscore = F_Score_US(name)
-  value = read.csv("value_list.csv", row.names = 1)
+  value = read.csv("US_value_list.csv", row.names = 1)
 
   if (sum(rownames(fscore) != rownames(value)) != 0) {
     warnings("FS and Value's rownames are not same")

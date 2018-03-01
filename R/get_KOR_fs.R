@@ -18,7 +18,7 @@
 #' @export
 get_KOR_fs = function() {
 
-  folder_name = "Korea_fs"
+  folder_name = "KOR_fs"
   ticker = get_KOR_ticker()
 
   ifelse(dir.exists(folder_name), FALSE, dir.create(folder_name))

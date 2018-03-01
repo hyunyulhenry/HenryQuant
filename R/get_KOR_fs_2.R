@@ -22,8 +22,8 @@
 #' @export
 get_KOR_fs2 = function() {
 
-value_name = "Korea_value"
-fs_name = "Korea_fs_2"
+value_name = "KOR_value"
+fs_name = "KOR_fs_2"
 ticker = get_KOR_ticker()
 
 ifelse(dir.exists(value_name), FALSE, dir.create(value_name))
@@ -71,9 +71,18 @@ ifelse(dir.exists(fs_name), FALSE, dir.create(fs_name))
       CF = html_node(temp, xpath = '//*[@id="divCashY"]/table') %>% html_table
 
       Sys.setlocale("LC_ALL", "Korean")
-
       IS = IS[, 1:5]
       FS_data = rbind(BS, IS, CF)
+
+      FS_data =  FS_data[!duplicated(FS_data[,1]),] %>% set_rownames(NULL)
+      FS_data = column_to_rownames(FS_data, var = colnames(FS_data)[1])
+      # rownames(FS_data) = gsub(" 펼치기","",rownames(FS_data))
+      FS_data[FS_data == ""] = NA
+
+      x = rownames(FS_data)
+
+      FS_data = apply(apply(FS_data, 2, gsub, patt=",", replace=""), 2, as.numeric) %>% set_rownames(x)
+
     }, error = function(e){})
     write.csv(FS_data,paste0(getwd(),"/",fs_name,"/",tick,"_fs.csv"))
   }
@@ -115,7 +124,7 @@ ifelse(dir.exists(fs_name), FALSE, dir.create(fs_name))
   }
 
   value_list = do.call(rbind, value_list)
-  write.csv(value_list,paste0(getwd(),"/","value_list_KOR.csv"))
+  write.csv(value_list,paste0(getwd(),"/","KOR_value_list.csv"))
 
   Sys.sleep(1)
 

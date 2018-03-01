@@ -55,7 +55,7 @@ arrange_US_fs = function() {
 
   fs_list = lapply(fs_list, function(x) {row.names(x) = ticker[,1]; x})
   names(fs_list) = fs_account
-  write.csv(fs_list, "fs_list_US.csv")
+  write.csv(fs_list, "US_fs_list.csv")
   return(fs_list)
 
 }

@@ -94,7 +94,7 @@ get_US_fs = function() {
 
 
   value_list = do.call(rbind, value_list)
-  write.csv(value_list,paste0(getwd(),"/","value_list.csv"))
+  write.csv(value_list,paste0(getwd(),"/","US_value_list.csv"))
 
 }
 

@@ -79,7 +79,7 @@ get_KOR_price = function(num_limit = 25) {
     }
 
     price = do.call(rbind, price) %>% as.xts %>% set_colnames(ticker[i, 1])
-    price = price[unique(index(price)), ]
+    price = price[!duplicated(index(price)), ]
 
     }, error = function(e){})
 

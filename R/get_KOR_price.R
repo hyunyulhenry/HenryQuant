@@ -8,7 +8,6 @@
 #'
 #' @param num_limit number of days to download. 1 for 30 days
 #'
-#' @importFrom quantmod getSymbols Ad Cl
 #' @importFrom utils write.csv
 #' @importFrom xts as.xts
 #' @importFrom zoo na.locf
@@ -102,6 +101,5 @@ get_KOR_price = function(num_limit = 25) {
   price_list = na.locf(price_list)
 
   write.csv(as.matrix(price_list),paste0(getwd(),"/","KOR_price_list",".csv"))
-
 
 }

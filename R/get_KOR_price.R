@@ -14,9 +14,10 @@
 #' @importFrom zoo na.locf
 #' @importFrom lubridate ymd today
 #' @importFrom tibble column_to_rownames
-#' @importFrom magrittr "%>%"
+#' @importFrom magrittr "%>%" set_rownames
 #' @importFrom httr GET
 #' @importFrom xml2 read_html
+#' @importFrom rvest html_node
 #' @examples
 #' \dontrun{
 #'  get_KOR_price(num_limit = 25)

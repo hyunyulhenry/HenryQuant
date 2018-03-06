@@ -78,7 +78,7 @@ get_KOR_price = function(num_limit = 25) {
     price = price[!duplicated(index(price)), ]
 
     }, error = function(e){})
-
+    }
 
     # If there is no data or crawling error, make it as empty price
 
@@ -88,7 +88,7 @@ get_KOR_price = function(num_limit = 25) {
       warning(paste0("Check Ticker"," ",ticker[i, 1]))
     }
 
-    if (ncol(price[[1]]) >=2) {
+    if (ncol(price) >=2) {
       price = list()
       price[[1]] = xts(matrix(NA, 1, 1), order.by = today())
       warning(paste0("Check Ticker"," ",ticker[i, 1]))
@@ -96,8 +96,6 @@ get_KOR_price = function(num_limit = 25) {
 
     write.csv(as.matrix(price),paste0(getwd(),"/","KOR_price","/",ticker[i,1],"_price.csv"))
     print(paste0(ticker[i, 1]," ",ticker[i,2]," ",round(i / nrow(ticker) * 100,3),"%"))
-
-    }
 
     Sys.sleep(1)
   }

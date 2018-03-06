@@ -85,12 +85,12 @@ get_KOR_price = function(num_limit = 25) {
     tryCatch({
 
     if (length(price) == 0) {
-      price = xts(matrix(NA, 1, 1), order.by = today())
+      price = xts(matrix(NA, 1, 1), order.by = today()) %>% set_colnames(ticker[i, 1])
       warning(paste0("Check Ticker"," ",ticker[i, 1]))
     }
 
     if (ncol(price) >=2) {
-      price = xts(matrix(NA, 1, 1), order.by = today())
+      price = xts(matrix(NA, 1, 1), order.by = today()) %>% set_colnames(ticker[i, 1])
       warning(paste0("Check Ticker"," ",ticker[i, 1]))
     }
 

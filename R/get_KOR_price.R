@@ -74,7 +74,9 @@ get_KOR_price = function(num_limit = 25) {
 
     }
 
-    if (length(price) == 0) {
+    # If there is no data or crawling error, make it as empty price
+    if ((length(price) == 0) | (ncol(price[[1]]) >=2)) {
+      price = list()
       price[[1]] = xts(matrix(NA, 1, 1), order.by = today())
     }
 

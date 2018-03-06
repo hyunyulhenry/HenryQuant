@@ -78,6 +78,7 @@ get_KOR_price = function(num_limit = 25) {
     if ((length(price) == 0) | (ncol(price[[1]]) >=2)) {
       price = list()
       price[[1]] = xts(matrix(NA, 1, 1), order.by = today())
+      warning(paste0("Check Ticker"," ",ticker[i, 1]))
     }
 
     price = do.call(rbind, price) %>% as.xts %>% set_colnames(ticker[i, 1])

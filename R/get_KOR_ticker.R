@@ -10,6 +10,8 @@
 #' @export
 get_KOR_ticker = function() {
 
+  Sys.setlocale("LC_ALL", "Korean")
+
   url = "http://www.sejongdata.com/query/value.html"
 
   temp = xml2::read_html(url,encoding = "UTF-8")

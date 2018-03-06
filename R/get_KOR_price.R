@@ -75,11 +75,18 @@ get_KOR_price = function(num_limit = 25) {
     }
 
     # If there is no data or crawling error, make it as empty price
-    if ((length(price) == 0) | (ncol(price[[1]]) >=2)) {
+    if (length(price) == 0) {
       price = list()
       price[[1]] = xts(matrix(NA, 1, 1), order.by = today())
       warning(paste0("Check Ticker"," ",ticker[i, 1]))
     }
+
+    if (ncol(price[[1]]) >=2) {
+      price = list()
+      price[[1]] = xts(matrix(NA, 1, 1), order.by = today())
+      warning(paste0("Check Ticker"," ",ticker[i, 1]))
+    }
+
 
     price = do.call(rbind, price) %>% as.xts %>% set_colnames(ticker[i, 1])
     price = price[!duplicated(index(price)), ]

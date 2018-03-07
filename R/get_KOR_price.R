@@ -74,27 +74,18 @@ get_KOR_price = function(num_limit = 25) {
 
     }
 
-    price = do.call(rbind, price) %>% as.xts %>% set_colnames(ticker[i, 1])
-    price = price[!duplicated(index(price)), ]
+    price = as.xts(do.call(rbind, price)) %>% set_colnames(ticker[i, 1])
+    price = price[!duplicated(index(price)),  ]
 
     }, error = function(e){})
     }
 
     # If there is no data or crawling error, make it as empty price
 
-    tryCatch({
-
-    if (length(price) == 0) {
+    if (is.null(ncol(price))) {
       price = xts(matrix(NA, 1, 1), order.by = today()) %>% set_colnames(ticker[i, 1])
       warning(paste0("Check Ticker"," ",ticker[i, 1]))
     }
-
-    if (ncol(price) >=2) {
-      price = xts(matrix(NA, 1, 1), order.by = today()) %>% set_colnames(ticker[i, 1])
-      warning(paste0("Check Ticker"," ",ticker[i, 1]))
-    }
-
-    }, error = function(e){})
 
     write.csv(as.matrix(price),paste0(getwd(),"/","KOR_price","/",ticker[i,1],"_price.csv"))
     print(paste0(ticker[i, 1]," ",ticker[i,2]," ",round(i / nrow(ticker) * 100,3),"%"))

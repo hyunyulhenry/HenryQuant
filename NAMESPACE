@@ -2,6 +2,7 @@
 
 export(F_Score_US)
 export(F_Score_value_US)
+export(Return.CumSeries)
 export(Return.portfolio.cut)
 export(Return.result)
 export(Return.stats)

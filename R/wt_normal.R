@@ -13,7 +13,7 @@
 #' @export
 wt_normal = function(MarketCap, MaxWeight = NULL, type = "VW") {
 
-  MarketCap = drop(MarketCap)
+  MarketCap = as.numeric(MarketCap)
   MarketCap = MarketCap / sum(MarketCap)
 
   if (type == "VW") {

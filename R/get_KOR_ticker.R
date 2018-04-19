@@ -2,28 +2,43 @@
 #'
 #' This function will Download all listed firm's ticker, name in KOR Markets.
 #' @return ticker, name
-#' @importFrom utils download.file read.csv
+#' @importFrom utils write.csv
+#' @importFrom stringr str_pad
+#' @importFrom httr POST
 #' @examples
 #' \dontrun{
-#'  get_KOR_ticker()
+#'  ticker = get_KOR_ticker()
 #'  }
 #' @export
 get_KOR_ticker = function() {
 
+  Sys.setlocale("LC_ALL", "English") # To English
+
+  # kospi = "http://kind.krx.co.kr/corpgeneral/corpList.do?method=download&marketType=stockMkt"
+  # kosdaq = "http://kind.krx.co.kr/corpgeneral/corpList.do?method=download&marketType=kosdaqMkt"
+
+  url = 'http://kind.krx.co.kr/corpgeneral/corpList.do'
+
+  kospi = POST(url, encode = 'form', body = list(method = 'download', marketType= 'stockMkt', searchType = '13'))
+  kosdaq = POST(url, encode = 'form', body = list(method = 'download', marketType= 'kosdaqMkt', searchType = '13'))
+
+  ks = read_html(kospi) %>% html_table
+  kq = read_html(kosdaq) %>% html_table
+
   Sys.setlocale("LC_ALL", "Korean")
 
-  url = "http://www.sejongdata.com/query/value.html"
+  ks = ks[[1]]
+  kq = kq[[1]]
 
-  temp = xml2::read_html(url,encoding = "UTF-8")
-  data = temp %>% html_nodes(".bus_board_txt1") %>% html_text
-  item = temp %>% html_nodes('.bus_board_tit1') %>% html_text
+  ks[,2] = str_pad(ks[,2], 6, side="left", pad="0")
+  kq[,2] = str_pad(kq[,2], 6, side="left", pad="0")
 
-  ticker = data.frame(matrix(data ,ncol=5, byrow=T))
-  names(ticker) = item
-  ticker = ticker[,c(1,2)]
-  rm(data, item, temp, url)
+  ks = cbind(ks[,2], ks[,1], "KOSPI")
+  kq = cbind(kq[,2], kq[,1], "KOSDAQ")
 
-  write.csv(ticker, "KOR_ticker_list.csv")
-  return(ticker)
+  result = rbind(ks, kq)
 
-}
+  write.csv(result, "KOR_ticker_list.csv")
+  return(result)
+
+  }

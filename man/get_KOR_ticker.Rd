@@ -14,6 +14,6 @@ This function will Download all listed firm's ticker, name in KOR Markets.
 }
 \examples{
 \dontrun{
- get_KOR_ticker()
+ ticker = get_KOR_ticker()
  }
 }

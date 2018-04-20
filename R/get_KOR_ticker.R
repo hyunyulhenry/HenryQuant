@@ -3,8 +3,8 @@
 #' This function will Download all listed firm's ticker, name in KOR Markets.
 #' @return ticker, name
 #' @importFrom utils write.csv
-#' @importFrom stringr str_pad
-#' @importFrom httr POST
+#' @importFrom httr POST content
+#' @importFrom RCurl getURL
 #' @examples
 #' \dontrun{
 #'  ticker = get_KOR_ticker()
@@ -12,33 +12,44 @@
 #' @export
 get_KOR_ticker = function() {
 
-  Sys.setlocale("LC_ALL", "English") # To English
+  ticker = c('STK', 'KSQ')
+  data = list()
 
-  # kospi = "http://kind.krx.co.kr/corpgeneral/corpList.do?method=download&marketType=stockMkt"
-  # kosdaq = "http://kind.krx.co.kr/corpgeneral/corpList.do?method=download&marketType=kosdaqMkt"
+  for (i in 1:2) {
 
-  url = 'http://kind.krx.co.kr/corpgeneral/corpList.do'
+    gen_otp_url = 'http://marketdata.krx.co.kr/contents/COM/GenerateOTP.jspx'
 
-  kospi = POST(url, encode = 'form', body = list(method = 'download', marketType= 'stockMkt', searchType = '13'))
-  kosdaq = POST(url, encode = 'form', body = list(method = 'download', marketType= 'kosdaqMkt', searchType = '13'))
+    gen_otp_data <- list(
+      name = 'fileDown',
+      filetype = 'csv',
+      url = 'MKD/04/0404/04040200/mkd04040200_01',
+      'market_gubun' = ticker[i],
+      'indx_ind_cd' = '',
+      'sect_tp_cd' = '',
+      'schdate' = gsub("-","",Sys.Date()),
+      'pagePath' = '/contents/MKD/04/0404/04040200/MKD04040200.jsp'
+    )
 
-  ks = read_html(kospi) %>% html_table
-  kq = read_html(kosdaq) %>% html_table
+    otp = POST(gen_otp_url, query = gen_otp_data)
+    otp_content  = content(otp,"text")
 
+    down_url = 'http://file.krx.co.kr/download.jspx'
+    down_data = list(
+      code = otp_content
+    )
+
+    html = POST(down_url, query = down_data)
+
+    down = getURL(html$url, .encoding = "UTF-8")
+    temp = read_csv(down)
+    data[[i]] = as.data.frame(temp) %>% column_to_rownames(var = colnames(temp)[1])
+  }
+
+  data = do.call(rbind, data)
+  data = data[,1:2]
   Sys.setlocale("LC_ALL", "Korean")
 
-  ks = ks[[1]]
-  kq = kq[[1]]
+  write.csv(data, "KOR_ticker_list.csv")
+  return(data)
 
-  ks[,2] = str_pad(ks[,2], 6, side="left", pad="0")
-  kq[,2] = str_pad(kq[,2], 6, side="left", pad="0")
-
-  ks = cbind(ks[,2], ks[,1], "KOSPI")
-  kq = cbind(kq[,2], kq[,1], "KOSDAQ")
-
-  result = rbind(ks, kq)
-
-  write.csv(result, "KOR_ticker_list.csv")
-  return(result)
-
-  }
+}

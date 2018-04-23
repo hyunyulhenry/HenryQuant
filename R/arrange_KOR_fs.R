@@ -21,7 +21,7 @@ arrange_KOR_fs = function() {
 
   ticker = get_KOR_ticker()
 
-  test = read.csv(paste0(getwd(),"/",fs_name,"/","005930","_fs.csv"), row.names = 1)
+  test = read.csv(paste0(getwd(),"/",fs_name,"/",ticker[i,1],"_fs.csv"), row.names = 1)
   m = nrow(test)
   n = ncol(test)
   fs_colnames = c("FY -3", "FY -2", "FY -1", "FY  0")

@@ -47,8 +47,9 @@ ifelse(dir.exists(fs_name), FALSE, dir.create(fs_name))
     txt = stri_trim_both(txt)
 
     txt = unlist(strsplit(txt, " "))
-    txt = txt[c(35,75,121,173,218)]
-    txt = data.frame(matrix(txt, ncol = 5)) %>% setNames(c("PER","12M PER", "Peer PER", "PBR", "Div Yield"))
+    txt = txt[c(35,75,121,173,218)] %>% as.numeric
+    txt = data.frame(matrix(txt, ncol = 5)) %>%
+      setNames(c("PER","12M PER", "Peer PER", "PBR", "Div Yield"))
 
     }, error = function(e){})
     write.csv(txt,paste0(getwd(),"/",value_name,"/",tick,"_value.csv"))

@@ -30,7 +30,7 @@ get_KOR_ticker = function() {
   }
 
   ticker = c("STK", "KSQ")
-  date = gsub("-", "", Sys.Date())
+  date = gsub("-", "", Sys.Date()-1)
   data = list()
 
   for (i in 1:2) {

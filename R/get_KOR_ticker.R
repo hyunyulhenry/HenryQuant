@@ -49,7 +49,9 @@ get_KOR_ticker = function() {
   }
 
   data = do.call(rbind, data)
-  data = data[, 1:2]
+  data = data[, c(1:2, 11)]
+  data[,3] = data[,3] / 100000000
+
   Sys.setlocale("LC_ALL", "Korean")
   write.csv(data, "KOR_ticker_list.csv")
   return(data)

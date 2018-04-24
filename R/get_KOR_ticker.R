@@ -4,7 +4,6 @@
 #' @return ticker, name
 #' @importFrom utils write.csv
 #' @importFrom httr POST content
-#' @importFrom RCurl getURL
 #' @importFrom readr read_csv
 #' @examples
 #' \dontrun{
@@ -24,7 +23,7 @@ down_data = function(market, date) {
   down_url = "http://file.krx.co.kr/download.jspx"
   down_data = list(code = otp_content)
   html = POST(down_url, query = down_data)
-  down = getURL(html$url, .encoding = "UTF-8")
+  down = read_html(html$url, encoding = "UTF-8") %>% html_text
   temp = read_csv(down)
   return(temp)
 }

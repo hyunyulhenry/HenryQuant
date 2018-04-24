@@ -19,10 +19,10 @@
 #' @importFrom rvest html_node
 #' @examples
 #' \dontrun{
-#'  get_KOR_price(num_limit = 25)
+#'  get_KOR_price(num_limit = 10)
 #'  }
 #' @export
-get_KOR_price = function(num_limit = 25) {
+get_KOR_price = function(num_limit = 10) {
 
   folder_name = "KOR_price"
   ticker = get_KOR_ticker()

@@ -16,16 +16,16 @@ wt_normal = function(MarketCap, MaxWeight = NULL, type = "VW") {
   MarketCap = as.numeric(MarketCap)
   MarketCap = MarketCap / sum(MarketCap)
 
+  if (is.null(MaxWeight)) {
+    MaxWeight = 1/length(MarketCap) * 2
+  }
+
   if (type == "VW") {
     wt = MarketCap / sum(MarketCap)
     while (max(wt) > MaxWeight) {
       wt[wt > MaxWeight] = MaxWeight
       wt = wt / sum(wt)
     }
-  }
-
-  if (is.null(MaxWeight)) {
-    MaxWeight = 1/length(MarketCap) * 2
   }
 
   if (type == "EW") {

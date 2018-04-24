@@ -39,9 +39,9 @@ get_KOR_price = function(num_limit = 25) {
     temp = column_to_rownames(temp, var = colnames(temp)[1])
 
     rownames(temp) = gsub('\\.',"-",rownames(temp))
-    x = rownames(temp)
-    x = ymd(x) %>% as.character
-    temp = apply(apply(temp, 2, gsub, patt=",", replace=""), 2, as.numeric) %>% set_rownames(x)
+    rownames(temp) = ymd(rownames(temp))
+
+    temp[,1] = gsub(',',"",temp[,1]) %>% as.numeric
 
     return(temp)
   }
@@ -64,7 +64,7 @@ get_KOR_price = function(num_limit = 25) {
       url = paste0("http://finance.daum.net/item/quote_yyyymmdd_sub.daum?page=",j,"&code=",ticker[i, 1],"&modify=1")
       temp = GET(url)
       temp = read_html(temp, encoding = "utf-8")
-      temp = html_node(temp, xpath = '//*[@id="bbsList"]') %>% html_table
+      temp = html_table(temp)[[1]]
 
       if (nrow(temp) <= 2) {
         next

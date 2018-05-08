@@ -48,7 +48,7 @@ Rank.IC = function(Rank, R) {
       to = as.Date(index(Rank[(i+1),]))
     }
 
-    sub_rank = Rank[from]
+    sub_rank = Rank[i, ]
     sub_ret = R_monthly[paste0(from+1, "::", to)]
 
     sub_list = list()

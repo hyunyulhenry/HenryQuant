@@ -26,7 +26,7 @@ get_mom_strength = function(R, Comparison = 0) {
 
   str_table = do.call(rbind, str_table)
   str_result = apply(str_table, 2, mean)
-  colnames(str_result) = colnames(R_m)
+  names(str_result) = colnames(R_m)
 
   return(str_result)
 }

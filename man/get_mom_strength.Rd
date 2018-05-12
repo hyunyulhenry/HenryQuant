@@ -7,7 +7,7 @@
 get_mom_strength(R, Comparison = 0)
 }
 \arguments{
-\item{R}{Return Data}
+\item{R}{Return Data (Recommend using 12-month return)}
 
 \item{Comparison}{The value to be the comparison value'}
 }

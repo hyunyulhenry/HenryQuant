@@ -1,4 +1,5 @@
 #' Corrects data located in outlier.
+#'
 #' It is possible to use the
 #' Windsorizing method to correct the data above the reference value and the
 #' Trim(Truncation) method to delete data above the reference value.

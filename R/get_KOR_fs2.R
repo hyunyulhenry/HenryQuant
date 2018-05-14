@@ -75,6 +75,10 @@ get_KOR_fs2 = function() {
         x = temp[x, last.col]
         x = gsub(",", "", x) %>% as.numeric
 
+        if (x ==0) {
+          x = NA
+        }
+
         if (nm1[t] != "DPS") {
           txt[t] = z / x
         } else {

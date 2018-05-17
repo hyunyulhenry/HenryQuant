@@ -14,7 +14,6 @@ RoxygenNote: 6.0.1
 Depends: R(>= 3.1.2)
 Imports: xts,
     PerformanceAnalytics,
-    PortfolioAnalytics,
     lubridate,
     stats,
     zoo,

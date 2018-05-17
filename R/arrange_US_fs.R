@@ -16,8 +16,7 @@ arrange_US_fs = function() {
 
   fs_name = "US_fs"
   if (dir.exists(fs_name) == FALSE) {
-    warning("You Need Download Financial Statement Data. Please execute get_US_fs() first")
-    break
+    stop("You Need Download Financial Statement Data. Please execute get_US_fs() first")
   }
 
   ticker = get_US_ticker()

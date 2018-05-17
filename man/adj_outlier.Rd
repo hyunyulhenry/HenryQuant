@@ -2,10 +2,7 @@
 % Please edit documentation in R/adj_outlier.R
 \name{adj_outlier}
 \alias{adj_outlier}
-\title{Corrects data located in outlier.
-It is possible to use the
-Windsorizing method to correct the data above the reference value and the
-Trim(Truncation) method to delete data above the reference value.}
+\title{Corrects data located in outlier.}
 \usage{
 adj_outlier(Input, Target = 0.01, Winsorizing = TRUE)
 }
@@ -17,7 +14,6 @@ adj_outlier(Input, Target = 0.01, Winsorizing = TRUE)
 \item{Winsorizing}{TRUE for Winsorizing method, FALSE for Trim(Truncation) method}
 }
 \description{
-Corrects data located in outlier.
 It is possible to use the
 Windsorizing method to correct the data above the reference value and the
 Trim(Truncation) method to delete data above the reference value.

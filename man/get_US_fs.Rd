@@ -2,7 +2,10 @@
 % Please edit documentation in R/get_US_fs.R
 \name{get_US_fs}
 \alias{get_US_fs}
-\title{Download all listed firm's financial statement data in US Markets.}
+\title{Download all listed firm's financial statement data in US Markets.
+This function will Download all listed firm's financial statement data in US Markets. (NYSE, NASDAQ, AMEX Market)
+It will aumomatically save individual stock value, financial statement
+and combined value for csv types}
 \usage{
 get_US_fs()
 }
@@ -10,15 +13,13 @@ get_US_fs()
 stock value and financial statement data
 }
 \description{
-This function will Download all listed firm's financial statement data in US Markets.
-(NYSE, NASDAQ, AMEX Market)
-}
-\details{
+Download all listed firm's financial statement data in US Markets.
+This function will Download all listed firm's financial statement data in US Markets. (NYSE, NASDAQ, AMEX Market)
 It will aumomatically save individual stock value, financial statement
 and combined value for csv types
 }
 \examples{
 \dontrun{
- US_fs = get_US_fs()
+ get_US_fs()
  }
 }

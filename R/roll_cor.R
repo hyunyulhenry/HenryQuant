@@ -10,6 +10,7 @@
 #' @param width number of periods to apply rolling function window over
 #' @importFrom PerformanceAnalytics checkData chart.RollingCorrelation
 #' @importFrom zoo rollapply
+#' @importFrom xts xts
 #' @importFrom stats na.omit cor time
 #' @examples
 #'   ret = asset_data[,c(1,5)]

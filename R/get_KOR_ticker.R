@@ -5,6 +5,8 @@
 #' @importFrom utils write.csv
 #' @importFrom httr POST content
 #' @importFrom readr read_csv
+#' @importFrom rvest html_text
+#' @importFrom xml2 read_html
 #' @examples
 #' \dontrun{
 #'  ticker = get_KOR_ticker()

@@ -15,7 +15,7 @@
 #' See Details below.
 #' @param \dots any other passthru parameters. Not currently used.
 #' @return returns a time series of returns weighted by the \code{weights}, applied loss cut function.
-#' @importFrom xts last periodicity first
+#' @importFrom xts last periodicity first endpoints
 #' @importFrom zoo coredata
 #' @examples
 #' \dontrun{

@@ -30,14 +30,14 @@ wt_maxdiv = function(covmat, lb = NULL, ub = NULL, cut_w = 0.001) {
     ub = rep(1, ncol(covmat))
   }
 
-  n1 = length(lb)
-  n2 = length(lb)
+  n = length(lb)
 
-  Aub = ( diag(ub) %*% matrix(1,n2, n1) ) - diag(n2)
-  Alb = ( diag(-lb) %*% matrix(1,n2, n1) ) + diag(n2)
-  Amat_mdp = cbind(sqrt(diag(covmat)), diag(n1), t(Alb), t(Aub))
-  bvec_mdp = c(1,rep(0,n1+n2+n2))
-  w_mdp = solve.QP(covmat,c(rep(0,n1)),Amat_mdp,bvec_mdp,1)
+  Alb = -lb %*% matrix(1, 1, n) + diag(n)
+  Aub = ub %*% matrix(1, 1, n) - diag(n)
+
+  Amat = t(rbind(sqrt(diag(covmat)), Alb, Aub))
+  bvec = c(1,rep(0,2*n))
+  w_mdp = solve.QP(covmat,c(rep(0,n)),Amat,bvec,1)
 
   w_mdp = w_mdp$solution
   w_mdp = w_mdp / sum(w_mdp)

@@ -15,7 +15,11 @@
 #'   weight = RiskBudget(covmat, target)
 #'   }
 #' @export
-RiskBudget = function (covmat, target, optctrl = ctrl(), ...){
+wt_RiskBudget = RiskBudget = function (covmat, target=NULL, optctrl = ctrl(), ...){
+
+  if(is.null(target)){
+    target = rep(1/nrow(covmat), nrow(covmat))
+  }
 
   if(!isSymmetric(covmat)){
     stop("Matrix provided for Sigma is not symmetric.\n")

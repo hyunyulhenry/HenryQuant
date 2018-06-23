@@ -5,7 +5,7 @@
 \title{Download all listed firm's financial statement data in US Markets.
 This function will Download all listed firm's financial statement data in US Markets. (NYSE, NASDAQ, AMEX Market)
 It will aumomatically save individual stock value, financial statement
-and combined value for csv types}
+and combined data for csv & Rds types}
 \usage{
 get_US_fs()
 }
@@ -16,7 +16,7 @@ stock value and financial statement data
 Download all listed firm's financial statement data in US Markets.
 This function will Download all listed firm's financial statement data in US Markets. (NYSE, NASDAQ, AMEX Market)
 It will aumomatically save individual stock value, financial statement
-and combined value for csv types
+and combined data for csv & Rds types
 }
 \examples{
 \dontrun{

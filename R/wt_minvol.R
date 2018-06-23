@@ -7,7 +7,6 @@
 #' @param ub Upper weight boundary. Default is Null
 #' @param cut_w If the calculated weight is lower than the corresponding weight,
 #' the weight is made zero. The default value is 1bp.
-#' @importFrom fBasics isPositiveDefinite
 #' @importFrom quadprog solve.QP
 #' @examples
 #' \dontrun{
@@ -17,10 +16,6 @@
 #'   }
 #' @export
 wt_minvol = function(covmat, lb = NULL, ub = NULL, cut_w = 0.001) {
-
-  if (isPositiveDefinite(covmat) != TRUE){
-    stop("Covariance matrix is not Positive Definite. It using near Positive Definite matrix")
-  }
 
   if (is.null(lb)) {
     lb = rep(0, ncol(covmat))

@@ -21,9 +21,6 @@ wt_RiskBudget = RiskBudget = function (covmat, target=NULL, optctrl = ctrl(), ..
     target = rep(1/nrow(covmat), nrow(covmat))
   }
 
-  if(!isSymmetric(covmat)){
-    stop("Matrix provided for Sigma is not symmetric.\n")
-  }
   N = ncol(covmat)
 
   call = match.call()

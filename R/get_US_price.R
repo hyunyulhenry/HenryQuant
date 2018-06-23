@@ -1,16 +1,11 @@
-#'Download all listed firm's price in US Markets.
+#' Download all listed firm's price in US Markets.
 #'
 #' This function will Download all listed firm's price in US Markets.
 #' (NYSE, NASDAQ, AMEX Market)
 #'
-#' If the source is "yahoo", it will download Adjsted price,
-#' and if source is "google", it will download normal price
-#'
 #' It will aumomatically save individual stock prices and
 #' combined prices for csv types
-
-#' @param src "yahoo" or "google"
-
+#'
 #' @return stock prices
 #' @importFrom quantmod getSymbols Ad Cl
 #' @importFrom utils write.csv
@@ -18,54 +13,56 @@
 #' @importFrom zoo na.locf
 #' @examples
 #' \dontrun{
-#'  US_price = get_US_price(src = "yahoo")
+#'  US_price = get_US_price()
 #'  }
 #' @export
-get_US_price = function(src = "yahoo") {
+get_US_price = function() {
 
-  ifelse(dir.exists("US_price"), FALSE, dir.create("US_price"))
+  folder_name = "US_price"
   ticker = get_US_ticker()
 
-  for(i in 1: nrow(ticker) ) {
+  ifelse(dir.exists(folder_name), FALSE, dir.create(folder_name))
 
-  if(file.exists(paste0(getwd(),"/","US_price","/",ticker[i,1],"_price.csv")) == TRUE){
+  # Price Download #
+  for(i in 1 : nrow(ticker) ) {
+
+  if(file.exists(paste0(getwd(),"/",folder_name,"/",ticker[i,1],"_price.csv")) == TRUE){
     next
   } else {
 
-    price = c()
+    name = ticker[i, 'Symbol']
+    price = xts(NA, order.by = Sys.Date())
+
     tryCatch({
+      price = Ad(getSymbols(name, auto.assign = FALSE))
+      colnames(price) = unlist(strsplit(names(price), ".Adjusted"))
+    }, error = function(e) {
+      print(paste0("Error in Ticker: ", name))
+    })
 
-      price = getSymbols(ticker[i, 1], src=src, auto.assign = FALSE)
-      if (src == "yahoo") {
-        price = Ad(price)
-        colnames(price) = unlist(strsplit(names(price), ".Adjusted"))
-      } else if (src == "google") {
-        price = Cl(price)
-        colnames(price) = unlist(strsplit(names(price), ".Close"))
-      }
-      price = na.locf(price)
+    price = price[!duplicated(index(price))]
 
-      write.csv(as.matrix(price),paste0(getwd(),"/","US_price","/",ticker[i,1],"_price.csv"))
-      print(paste0(ticker[i, 1]," ",ticker[i,2]," ",round(i / nrow(ticker) * 100,3),"%"))
+    write.csv(as.matrix(price),paste0(getwd(),"/",folder_name,"/",ticker[i,1],"_price.csv"))
+    print(paste0(ticker[i, 1]," ",ticker[i,2]," ",round(i / nrow(ticker) * 100,3),"%"))
 
-    }, error = function(e){})
+    Sys.sleep(2)
 
   }
-    Sys.sleep(1)
   }
+
+  print("Data download is complete. Data binding is in progress.")
+
+  # Arrange #
 
   price_list = list()
-  for (i in 1 : nrow(ticker)){
-    tryCatch({
-    price_list[[i]] = as.xts(read.csv(paste0(getwd(),"/","US_price","/",ticker[i,1],"_price.csv"), row.names = 1), drop.time = TRUE)
-    }, error = function(e){})
+  for (i in 1 : nrow(ticker)) {
+    price_list[[i]] = as.xts(read.csv(paste0(getwd(),"/",folder_name,"/",name,"_price.csv"), row.names = 1))
   }
 
   price_list = do.call(cbind, price_list)
+  price_list = price_list[!duplicated(index(price_list))]
   price_list = na.locf(price_list)
 
-  write.csv(as.matrix(price_list),paste0(getwd(),"/","US_price_list",".csv"))
-  return(price_list)
+  write.csv(data.frame(price_list),paste0(getwd(),"/",folder_name,".csv"))
 
 }
-

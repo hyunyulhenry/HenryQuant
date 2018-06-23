@@ -1,10 +1,13 @@
 #' Download all listed firm's financial statement data in US Markets.
 #' This function will Download all listed firm's financial statement data in US Markets. (NYSE, NASDAQ, AMEX Market)
 #' It will aumomatically save individual stock value, financial statement
-#' and combined value for csv types
+#' and combined data for csv & Rds types
+#'
 #' @return stock value and financial statement data
 #' @importFrom utils write.csv
-#' @importFrom quantmod getFinancials getQuote viewFinancials yahooQF
+#' @importFrom magrittr "%>%"
+#' @importFrom quantmod getQuote yahooQF
+#' @importFrom data.table rbindlist
 #' @examples
 #' \dontrun{
 #'  get_US_fs()
@@ -23,72 +26,80 @@ get_US_fs = function() {
 
   #--- Download VALUE ---#
 
-  down_value = function(tick) {
+  down_value = function(name) {
 
-    temp_value = matrix(NA, 1, 3)
-    rownames(temp_value) = tick
-    colnames(temp_value) = c("P/E Ratio", "Price/Book", "Dividend Yield")
+    data_value = c()
 
     tryCatch({
-      temp_value = getQuote(tick,what=Ratios)[, -1]
-    }, error = function(e){})
+      Ratios = yahooQF(c("P/E Ratio", "Price/Book", "Dividend Yield"))
+      data_value = getQuote(name, what = Ratios)[-1]
 
-    write.csv(temp_value,paste0(getwd(),"/",value_name,"/",tick,"_value.csv"))
+    }, error = function(e) {
+      data_value <<- NA
+      print(paste0("Error in Ticker: ", name))}
+    )
+
+    write.csv(data_value,paste0(getwd(),"/",value_name,"/",name,"_value.csv"))
+
   }
 
-  #--- FS Cleansing ---#
-
-  fs_clean = function(data) {
-
-    K = which((data[,1] != data[,ncol(data)]) )
-    return(K)
-  }
 
   #--- Download FS ---#
 
-  down_fs = function(tick) {
+  down_fs = function(name) {
 
-    FS_data = c()
+    data_fs = c()
+
     tryCatch({
+      Sys.setlocale("LC_ALL", "English")
+      yahoo.finance.xpath = '//*[@id="Col1-1-Financials-Proxy"]/section/div[3]/table'
 
-      Sys.setlocale("LC_ALL", "English") # To English
+      IS = paste0("https://finance.yahoo.com/quote/",name,"/financials?p=",name) %>%
+        GET() %>% read_html() %>% html_nodes(xpath = yahoo.finance.xpath) %>%
+        html_table() %>% data.frame()
+      Sys.sleep(0.5)
 
-      IS = paste0("https://finance.yahoo.com/quote/",tick,"/financials?p=",tick) %>%
-        GET %>% read_html(encoding = "utf-8") %>% html_table
+      BS = paste0("https://finance.yahoo.com/quote/",name,"/balance-sheet?p=",name) %>%
+        GET() %>% read_html() %>% html_nodes(xpath = yahoo.finance.xpath) %>%
+        html_table() %>% data.frame()
+      Sys.sleep(0.5)
 
-      BS = paste0("https://finance.yahoo.com/quote/",tick,"/balance-sheet?p=",tick) %>%
-        GET %>% read_html(encoding = "utf-8") %>% html_table
+      CF = paste0("https://finance.yahoo.com/quote/",name,"/cash-flow?p=",name) %>%
+        GET() %>% read_html() %>% html_nodes(xpath = yahoo.finance.xpath) %>%
+        html_table() %>% data.frame()
 
-      CF = paste0("https://finance.yahoo.com/quote/",tick,"/cash-flow?p=",tick) %>%
-        GET %>% read_html(encoding = "utf-8") %>% html_table
+      data_fs = rbind(IS, BS, CF)
+      data_fs = data_fs[!duplicated(data_fs[, 1]), ]
 
-      IS = IS[[2]]
-      BS = BS[[2]]
-      CF = CF[[2]]
+      colnames(data_fs) = data_fs[1,]
+      data_fs = data_fs[-1, ]
 
-      FS_data = rbind(IS, BS, CF)
-      FS_data = set_colnames(FS_data, FS_data[1,])
-      FS_data = FS_data[-1, ]
+      rownames(data_fs) = data_fs[,1]
+      data_fs = data_fs[,-1]
 
-      FS_data = FS_data[fs_clean(FS_data), ]
-      FS_data = FS_data[!duplicated(FS_data[,1]),] %>% set_rownames(NULL)
+      for (j in 1:ncol(data_fs)) {
+        data_fs[, j] = gsub(",", "", data_fs[, j]) %>% as.numeric
+      }
 
-      x = FS_data[,1]
+      colnames(data_fs) = sapply(colnames(data_fs), function(x) {
+        substring(x,nchar(x)-3, nchar(x))
+      })
 
-      FS_data = apply(apply(FS_data[,2:ncol(FS_data)], 2, gsub, patt = ",", replace = ""), 2, as.numeric) %>%
-        set_rownames(x) %>% data.frame
+    }, error = function(e) {
+      data_fs <<- NA
+      print(paste0("Error in Ticker: ", name))}
+    )
 
-    }, error = function(e){})
-    write.csv(FS_data, paste0(getwd(),"/",fs_name,"/",tick,"_fs.csv"))
+    write.csv(data_fs, paste0(getwd(),"/",fs_name,"/",name,"_fs.csv"))
   }
 
 
   #--- Download Data ---#
   for(i in 1: nrow(ticker) ) {
 
-    tick = ticker[i,1]
-    v = paste0(getwd(),"/",value_name,"/",tick,"_value.csv")
-    f = paste0(getwd(),"/",fs_name,"/",tick,"_fs.csv")
+    name = ticker[i,1]
+    v = paste0(getwd(),"/",value_name,"/",name,"_value.csv")
+    f = paste0(getwd(),"/",fs_name,"/",name,"_fs.csv")
 
     #--- Existing Test ---#
     if ((file.exists(v) == TRUE) & (file.exists(f) == TRUE)) {
@@ -96,31 +107,90 @@ get_US_fs = function() {
     }
 
     if ((file.exists(v) == TRUE) & (file.exists(f) == FALSE)) {
-      down_fs(tick)
+      down_fs(name)
     }
 
     if ((file.exists(v) == FALSE) & (file.exists(f) == TRUE)) {
-      down_value(tick)
+      down_value(name)
     }
 
     if ((file.exists(v) == FALSE) & (file.exists(f) == FALSE)) {
-      down_fs(tick)
-      down_value(tick)
+      down_fs(name)
+      down_value(name)
     }
 
     #--- End ---#
-    print(paste0(tick," ",ticker[i,2]," ",round(i / nrow(ticker) * 100,3),"%"))
-    Sys.sleep(1)
+    print(paste0(name," ",ticker[i,2]," ",round(i / nrow(ticker) * 100,3),"%"))
+    Sys.sleep(2)
   }
 
+  print("Data download is complete. Data binding is in progress.")
+
+  # Binding Value #
+  print("Binding Value")
+  data_value = list()
+  for (i in 1 : nrow(ticker)) {
+    name = ticker[i, 1]
+    data_value[[i]] = read.csv(paste0(getwd(),"/",value_name,"/",name,"_value.csv"), row.names = 1)
+  }
+
+  item = data_value[[1]] %>% colnames()
   value_list = list()
-  for (i in 1 : nrow(ticker)){
-    value_list[[i]] = read.csv(paste0(getwd(),"/",value_name,"/",ticker[i,1],"_value.csv"), row.names = 1) %>%
-      set_rownames(ticker[i, 1])
+  temp_data = c()
+
+  for (i in 1 : length(item)) {
+    value_list[[i]] = lapply(data_value, function(x) {
+      temp_data <<- x[which(colnames(x) == item[i])]
+      if ( (temp_data %>% data.frame %>% nrow()) == 1) {
+        temp_data
+      } else {
+        NA
+      }
+    })
   }
 
-  value_list = do.call(rbind, value_list)
-  write.csv(value_list,paste0(getwd(),"/","US_value_list.csv"))
+  value_list = lapply(value_list, function(x) {do.call(rbind, x)})
+  value_list = do.call(cbind, value_list) %>% data.frame()
+
+  rownames(value_list) = ticker[, 1]
+  colnames(value_list) = item
+
+  write.csv(value_list,paste0(getwd(),"/","US_value.csv"))
+
+  # Binding Financial Statement
+  print("Binding Financial Statement")
+  data_fs = list()
+  for (i in 1 : nrow(ticker)) {
+    name = ticker[i, 1]
+    data_fs[[i]] = read.csv(paste0(getwd(),"/",fs_name,"/",name,"_fs.csv"), row.names = 1)
+  }
+
+  item = data_fs[[1]] %>% rownames()
+  fs_list = list()
+  temp_data = c()
+
+  for (i in 1 : length(item)) {
+    fs_list[[i]] = lapply(data_fs, function(x) {
+      temp_data <<- x[which(rownames(x) == item[i]),]
+      if (temp_data %>% data.frame %>% nrow() == 1) {
+        cbind(temp_data,
+              matrix(NA, 1, 4-ncol(temp_data)) %>% data.frame() )
+      } else {
+        matrix(NA, 1, 4) %>% data.frame()
+      }
+    })
+
+    if ((i %% 10) == 0) { print(paste0("Binding Financial Statement: ", round((i / length(item)) * 100,2)," %")) }
+  }
+
+  fs_list = lapply(fs_list, function(x) {rbindlist(x) %>% data.frame()})
+  fs_list = lapply(fs_list, function(x) {
+    rownames(x) = ticker[,1] %>% as.character()
+    return(x)
+  })
+  names(fs_list) = item
+  saveRDS(fs_list, paste0("US_fs.Rds"))
+
 
 }
 

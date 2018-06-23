@@ -4,10 +4,7 @@
 \alias{get_US_price}
 \title{Download all listed firm's price in US Markets.}
 \usage{
-get_US_price(src = "yahoo")
-}
-\arguments{
-\item{src}{"yahoo" or "google"}
+get_US_price()
 }
 \value{
 stock prices
@@ -17,14 +14,11 @@ This function will Download all listed firm's price in US Markets.
 (NYSE, NASDAQ, AMEX Market)
 }
 \details{
-If the source is "yahoo", it will download Adjsted price,
-and if source is "google", it will download normal price
-
 It will aumomatically save individual stock prices and
 combined prices for csv types
 }
 \examples{
 \dontrun{
- US_price = get_US_price(src = "yahoo")
+ US_price = get_US_price()
  }
 }

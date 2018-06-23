@@ -4,14 +4,20 @@
 \alias{get_KOR_fs}
 \title{Download all listed firms financial statement data in korea markets}
 \usage{
-get_KOR_fs()
+get_KOR_fs(type = "simple")
+}
+\arguments{
+\item{type}{simple: simple financial statement data, complex: full financial statement}
 }
 \value{
-Save financial statement data for all listed firms
+Save financial statement & and valuation data for all listed firms
 }
 \description{
-This function will Download all listed firms financial statement data,
-usually data for the last 20 years
+This function will Download all listed valuation and financial statement data,
+usually data for the last 4 years
+}
+\details{
+Downloading data from Company Wise (http://comp.wisereport.co.kr)
 }
 \examples{
 \dontrun{

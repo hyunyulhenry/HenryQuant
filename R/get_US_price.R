@@ -56,6 +56,7 @@ get_US_price = function() {
 
   price_list = list()
   for (i in 1 : nrow(ticker)) {
+    name = ticker[i, "Symbol"]
     price_list[[i]] = as.xts(read.csv(paste0(getwd(),"/",folder_name,"/",name,"_price.csv"), row.names = 1))
   }
 

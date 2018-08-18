@@ -30,7 +30,7 @@ get_US_price = function() {
     next
   } else {
 
-    name = ticker[i, 'Symbol']
+    name = ticker[i, 1]
     price = xts(NA, order.by = Sys.Date())
 
     tryCatch({
@@ -56,7 +56,9 @@ get_US_price = function() {
 
   price_list = list()
   for (i in 1 : nrow(ticker)) {
+    name = ticker[i, 1]
     price_list[[i]] = as.xts(read.csv(paste0(getwd(),"/",folder_name,"/",name,"_price.csv"), row.names = 1))
+    if ((i %% 10) == 0) { print(paste0("Binding Price: ", round((i / nrow(ticker)) * 100,2)," %")) }
   }
 
   price_list = do.call(cbind, price_list)

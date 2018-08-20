@@ -64,6 +64,7 @@ get_US_price = function() {
   price_list = do.call(cbind, price_list)
   price_list = price_list[!duplicated(index(price_list))]
   price_list = na.locf(price_list)
+  colnames(price_list) = ticker[, 1]
 
   write.csv(data.frame(price_list),paste0(getwd(),"/",folder_name,".csv"))
 

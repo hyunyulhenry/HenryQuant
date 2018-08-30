@@ -83,7 +83,7 @@ get_KOR_price = function(num_limit = 10) {
     write.csv(data.frame(price_list),paste0(getwd(),"/",folder_name,"/",name,"_price.csv"))
     print(paste0(name," ",ticker[i,2]," ",round(i / nrow(ticker) * 100,3),"%"))
 
-    Sys.sleep(2)
+    Sys.sleep(3)
     }
   }
 

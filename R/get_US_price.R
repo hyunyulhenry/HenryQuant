@@ -45,7 +45,7 @@ get_US_price = function() {
     write.csv(as.matrix(price),paste0(getwd(),"/",folder_name,"/",ticker[i,1],"_price.csv"))
     print(paste0(ticker[i, 1]," ",ticker[i,2]," ",round(i / nrow(ticker) * 100,3),"%"))
 
-    Sys.sleep(2)
+    Sys.sleep(3)
 
   }
   }

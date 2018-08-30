@@ -121,7 +121,7 @@ get_US_fs = function() {
 
     #--- End ---#
     print(paste0(name," ",ticker[i,2]," ",round(i / nrow(ticker) * 100,3),"%"))
-    Sys.sleep(2)
+    Sys.sleep(3)
   }
 
   print("Data download is complete. Data binding is in progress.")

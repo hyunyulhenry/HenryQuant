@@ -3,9 +3,8 @@
 #' This function will Download all listed valuation and financial statement data,
 #' usually data for the last 4 years
 #'
-#' Downloading data from Company Wise (http://comp.wisereport.co.kr)
+#' Downloading data from Naver finance (https://companyinfo.stock.naver.com)
 #'
-#' @param type simple: simple financial statement data, complex: full financial statement
 #' @return Save financial statement & and valuation data for all listed firms
 #' @importFrom magrittr "%>%"
 #' @importFrom xml2 read_html
@@ -20,10 +19,10 @@
 #'   get_KOR_fs()
 #'   }
 #' @export
-get_KOR_fs = function(type = "simple") {
+get_KOR_fs = function() {
 
   value_name = "KOR_value"
-  fs_name = paste0("KOR_fs","_",type)
+  fs_name = "KOR_fs"
   ticker = get_KOR_ticker()
 
   ifelse(dir.exists(value_name), FALSE, dir.create(value_name))
@@ -37,8 +36,8 @@ get_KOR_fs = function(type = "simple") {
 
     tryCatch({
 
-      url = paste0("http://comp.wisereport.co.kr/company/cF4002.aspx?cmp_cd=",
-                   name,"frq=0&rpt=5&finGubun=MAIN&frqTyp=0&cn=")
+      url = paste0("https://companyinfo.stock.naver.com/v1/company/cF4002.aspx?cmp_cd=",
+                   name,"&frq=0&rpt=5&finGubun=MAIN&frqTyp=0&cn=")
       Sys.setlocale("LC_ALL", "English")
       data = fromJSON(url)
       data = data[[2]] %>% data.frame()
@@ -50,11 +49,11 @@ get_KOR_fs = function(type = "simple") {
       value.type = c("EPS", "BPS", "CPS", "SPS", "DPS")
       data_value = data_table[sapply(value.type, function(x) {which(rownames(data_table) == x)}), ]
 
-      url = paste0("http://comp.wisereport.co.kr/company/c1010001.aspx?cmp_cd=",
+      url = paste0("https://companyinfo.stock.naver.com/v1/company/c1010001.aspx?cmp_cd=",
                    name,"&cn=")
       price = GET(url) %>%
         read_html() %>%
-        html_nodes(xpath = '//*[@id="comInfo"]/tbody/tr[1]/td[2]/ul/li[8]/p/b') %>%
+        html_nodes(xpath = '//*[@id="cTB11"]/tbody/tr[1]/td/strong') %>%
         html_text()
 
       price = gsub(",", "", price) %>% as.numeric()
@@ -74,81 +73,38 @@ get_KOR_fs = function(type = "simple") {
 
 
   # Download FS #
-  if (type == "simple") { # simple financial statement
+  down_fs = function(name) {
+    data_fs = list()
+    tryCatch({
 
-    down_fs = function(name) {
-
-      data_fs = c()
-      tryCatch({
-
-        url = paste0("http://comp.wisereport.co.kr/company/ajax/cF1001.aspx?cmp_cd=",
-                     name,"&fin_typ=0&freq_typ=Y")
+      for (j in 0 : 2) {
+        url = paste0("https://companyinfo.stock.naver.com/v1/company/cF3002.aspx?cmp_cd=",
+                     name,"&frq=0&rpt=",j,"&finGubun=MAIN&frqTyp=0&cn=")
         Sys.setlocale("LC_ALL", "English")
-        data = GET(url)
-        data_fs = read_html(data) %>%
-          html_table(fill = TRUE) %>%
-          data.frame()
+        data = fromJSON(url)
         Sys.setlocale("LC_ALL", "Korean")
 
-        data_fs = data_fs[, 1:6]
+        yr_name = data[[1]][1:5] %>% data.frame()
+        yr_name = apply(yr_name, 1, function(x) {substr(x, 1, 4)})
 
-        colnames(data_fs) = data_fs[1, ]
-        data_fs = data_fs[-1, ]
+        data = data[[2]]
+        data_table = cbind(data$DATA1, data$DATA2, data$DATA3, data$DATA4, data$DATA5)
+        rownames(data_table) = data$ACC_NM
+        colnames(data_table) = yr_name
 
-        rownames(data_fs) = data_fs[,1]
-        data_fs = data_fs[,-1]
+        data_fs[[j+1]] = data_table
+        Sys.sleep(0.5)
+      }
 
-        for (j in 1:ncol(data_fs)) {
-          data_fs[, j] = gsub(",", "", data_fs[, j]) %>% as.numeric
-        }
+      data_fs = do.call(rbind, data_fs)
+      data_fs = data_fs[!duplicated(rownames(data_fs)), ]
 
-        colnames(data_fs) = substr(colnames(data_fs),1,7)
-
-      }, error = function(e) {
-        data_fs <<- NA
-        warning(paste0("Error in Ticker: ", name))}
-      )
-
-      write.csv(data_fs, paste0(getwd(),"/",fs_name,"/",name,"_fs.csv"))
-    }
-
-  } else if (type == "complex") { #complex financial statement
-
-    down_fs = function(name) {
-
-      data_fs = list()
-      tryCatch({
-
-        for (j in 0 : 2) {
-          url = paste0("https://companyinfo.stock.naver.com/v1/company/cF3002.aspx?cmp_cd=",
-                       name,"&frq=0&rpt=",j,"&finGubun=MAIN&frqTyp=0&cn=")
-          Sys.setlocale("LC_ALL", "English")
-          data = fromJSON(url)
-          Sys.setlocale("LC_ALL", "Korean")
-
-          yr_name = data[[1]][1:5] %>% data.frame()
-          yr_name = apply(yr_name, 1, function(x) {substr(x, 1, 4)})
-
-          data = data[[2]]
-          data_table = cbind(data$DATA1, data$DATA2, data$DATA3, data$DATA4, data$DATA5)
-          rownames(data_table) = data$ACC_NM
-          colnames(data_table) = yr_name
-
-          data_fs[[j+1]] = data_table
-          Sys.sleep(0.5)
-        }
-
-        data_fs = do.call(rbind, data_fs)
-        data_fs = data_fs[!duplicated(rownames(data_fs)), ]
-
-      }, error = function(e) {
-        data_fs <<- NA
-        warning(paste0("Error in Ticker: ", name))}
-      )
-      write.csv(data_fs, paste0(getwd(),"/",fs_name,"/",name,"_fs.csv"))
-    }
+    }, error = function(e) {
+      data_fs <<- NA
+      warning(paste0("Error in Ticker: ", name))}
+    )
+    write.csv(data_fs, paste0(getwd(),"/",fs_name,"/",name,"_fs.csv"))
   }
-
 
   # Download Data #
   for (i in 1:nrow(ticker) ) {
@@ -177,7 +133,7 @@ get_KOR_fs = function(type = "simple") {
 
     #--- End ---#
     print(paste0(name," ",ticker[i,2]," ",round(i / nrow(ticker) * 100,3),"%"))
-    Sys.sleep(2)
+    Sys.sleep(3)
   }
 
   print("Data download is complete. Data binding is in progress.")
@@ -246,6 +202,6 @@ get_KOR_fs = function(type = "simple") {
     return(x)
   })
   names(fs_list) = item
-  saveRDS(fs_list, paste0("KOR_fs_",type,".Rds"))
+  saveRDS(fs_list, paste0("KOR_fs.Rds"))
 
 }

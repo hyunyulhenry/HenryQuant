@@ -8,7 +8,8 @@
 #' @param R Return Data
 #' @importFrom xts as.xts endpoints
 #' @importFrom graphics plot
-#' @importFrom stats coef lm na.action na.exclude
+#' @importFrom stats coef lm na.action na.exclude na.omit
+#'
 #' @examples
 #' \dontrun{
 #'   ret = asset_data

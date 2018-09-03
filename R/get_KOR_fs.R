@@ -153,9 +153,8 @@ get_KOR_fs = function() {
 
   for (i in 1 : length(item)) {
     value_list[[i]] = lapply(data_value, function(x) {
-      temp_data <<- x[which(rownames(x) == item[i]),]
-      if ( (temp_data %>% data.frame %>% nrow()) == 1) {
-        temp_data
+      if ( item[i] %in% rownames(x) ) {
+        x[which(rownames(x) == item[i]),]
       } else {
         NA
       }
@@ -185,9 +184,8 @@ get_KOR_fs = function() {
 
   for (i in 1 : length(item)) {
     fs_list[[i]] = lapply(data_fs, function(x) {
-      temp_data <<- x[which(rownames(x) == item[i]),]
-      if ( (temp_data %>% data.frame %>% nrow()) == 1) {
-        temp_data
+      if ( item[i] %in% rownames(x) ) {
+        x[which(rownames(x) == item[i]),]
       } else {
         matrix(NA, 1, 5) %>% data.frame()
       }

@@ -1,6 +1,6 @@
-#' Download all listed firm's financial statement data in US Markets.
+#' Download all listed firm's financial statement data in JAPAN Markets.
 #'
-#' This function will Download all listed firm's financial statement data in US Markets. (NYSE, NASDAQ, AMEX Market)
+#' This function will Download all listed firm's financial statement data in JAPAN Markets. (NYSE, NASDAQ, AMEX Market)
 #' It will aumomatically save individual stock value, financial statement
 #' and combined data for csv & Rds types
 #'
@@ -11,18 +11,19 @@
 #' @importFrom data.table rbindlist
 #' @examples
 #' \dontrun{
-#'  get_US_fs()
+#'  get_JAPAN_fs()
 #'  }
 #' @export
-get_US_fs = function() {
 
-  value_name = "US_value"
-  fs_name = "US_fs"
+get_JAPAN_fs = function() {
+
+  value_name = "JAPAN_value"
+  fs_name = "JAPAN_fs"
 
   ifelse(dir.exists(value_name), FALSE, dir.create(value_name))
   ifelse(dir.exists(fs_name), FALSE, dir.create(fs_name))
 
-  ticker = get_US_ticker()
+  ticker = get_JAPAN_ticker()
   Ratios = yahooQF(c("P/E Ratio", "Price/Book", "Dividend Yield"))
 
   #--- Download VALUE ---#
@@ -98,7 +99,7 @@ get_US_fs = function() {
   #--- Download Data ---#
   for(i in 1: nrow(ticker) ) {
 
-    name = ticker[i,1]
+    name = paste0(ticker[i,3],".T")
     v = paste0(getwd(),"/",value_name,"/",name,"_value.csv")
     f = paste0(getwd(),"/",fs_name,"/",name,"_fs.csv")
 
@@ -155,7 +156,7 @@ get_US_fs = function() {
   rownames(value_list) = ticker[, 1]
   colnames(value_list) = item
 
-  write.csv(value_list,paste0(getwd(),"/","US_value.csv"))
+  write.csv(value_list,paste0(getwd(),"/","JAPAN_value.csv"))
 
   # Binding Financial Statement
   print("Binding Financial Statement")
@@ -188,6 +189,6 @@ get_US_fs = function() {
     return(x)
   })
   names(fs_list) = item
-  saveRDS(fs_list, paste0("US_fs.Rds"))
+  saveRDS(fs_list, paste0("JAPAN_fs.Rds"))
 
 }

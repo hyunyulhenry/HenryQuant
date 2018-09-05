@@ -52,7 +52,7 @@ get_KOR_price = function(num_limit = 10) {
     name = ticker[i, 1] %>% as.character()
     price_list = list(xts(NA, order.by = Sys.Date()))
 
-    if(file.exists(paste0(getwd(),"/","KOR_price","/",name,"_price.csv")) == TRUE){
+    if(file.exists(paste0(getwd(),"/",folder_name,"/",name,"_price.csv")) == TRUE){
       next
     } else {
 

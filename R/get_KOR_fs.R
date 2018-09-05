@@ -68,7 +68,7 @@ get_KOR_fs = function() {
       warning(paste0("Error in Ticker: ", name))}
     )
 
-    write.csv(data_value, paste0(getwd(),"/",value_name,"/",name,"_value.csv"))
+    write.csv(data_value, paste0(value_name,"/",name,"_value.csv"))
   }
 
 
@@ -103,7 +103,7 @@ get_KOR_fs = function() {
       data_fs <<- NA
       warning(paste0("Error in Ticker: ", name))}
     )
-    write.csv(data_fs, paste0(getwd(),"/",fs_name,"/",name,"_fs.csv"))
+    write.csv(data_fs, paste0(fs_name,"/",name,"_fs.csv"))
   }
 
   # Download Data #
@@ -167,7 +167,7 @@ get_KOR_fs = function() {
   rownames(value_list) = ticker[, 1]
   colnames(value_list) = item
 
-  write.csv(value_list, "KOR_value.csv")
+  write.csv(value_list,paste0(getwd(),"/",value_name,".csv"))
 
 
   # Binding Financial Statement #
@@ -200,6 +200,6 @@ get_KOR_fs = function() {
     return(x)
   })
   names(fs_list) = item
-  saveRDS(fs_list, paste0("KOR_fs.Rds"))
+  saveRDS(fs_list, paste0(getwd(),"/",fs_name,".Rds"))
 
 }

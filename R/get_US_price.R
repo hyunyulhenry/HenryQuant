@@ -26,28 +26,29 @@ get_US_price = function() {
   # Price Download #
   for(i in 1 : nrow(ticker) ) {
 
-  if(file.exists(paste0(getwd(),"/",folder_name,"/",ticker[i,1],"_price.csv")) == TRUE){
-    next
-  } else {
-
     name = ticker[i, 1]
-    price = xts(NA, order.by = Sys.Date())
 
-    tryCatch({
-      price = Ad(getSymbols(name, auto.assign = FALSE))
-      colnames(price) = unlist(strsplit(names(price), ".Adjusted"))
-    }, error = function(e) {
-      print(paste0("Error in Ticker: ", name))
-    })
+    if(file.exists(paste0(folder_name,"/",name,"_price.csv")) == TRUE){
+      next
+    } else {
 
-    price = price[!duplicated(index(price))]
+      price = xts(NA, order.by = Sys.Date())
 
-    write.csv(as.matrix(price),paste0(getwd(),"/",folder_name,"/",ticker[i,1],"_price.csv"))
-    print(paste0(ticker[i, 1]," ",ticker[i,2]," ",round(i / nrow(ticker) * 100,3),"%"))
+      tryCatch({
+        price = Ad(getSymbols(name, auto.assign = FALSE))
+        colnames(price) = unlist(strsplit(names(price), ".Adjusted"))
+      }, error = function(e) {
+        print(paste0("Error in Ticker: ", name))
+      })
 
-    Sys.sleep(3)
+      price = price[!duplicated(index(price))]
 
-  }
+      write.csv(as.matrix(price),paste0(getwd(),"/",folder_name,"/",ticker[i,1],"_price.csv"))
+      print(paste0(ticker[i, 1]," ",ticker[i,2]," ",round(i / nrow(ticker) * 100,3),"%"))
+
+      Sys.sleep(3)
+
+    }
   }
 
   print("Data download is complete. Data binding is in progress.")

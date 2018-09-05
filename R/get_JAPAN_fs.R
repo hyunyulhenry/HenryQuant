@@ -132,7 +132,7 @@ get_JAPAN_fs = function() {
   print("Binding Value")
   data_value = list()
   for (i in 1 : nrow(ticker)) {
-    name = ticker[i, 1]
+    name = paste0(ticker[i,3],".T")
     data_value[[i]] = read.csv(paste0(getwd(),"/",value_name,"/",name,"_value.csv"), row.names = 1)
   }
 
@@ -153,16 +153,16 @@ get_JAPAN_fs = function() {
   value_list = lapply(value_list, function(x) {do.call(rbind, x)})
   value_list = do.call(cbind, value_list) %>% data.frame()
 
-  rownames(value_list) = ticker[, 1]
+  rownames(value_list) = paste0(ticker[, 3],".T")
   colnames(value_list) = item
 
-  write.csv(value_list,paste0(getwd(),"/","JAPAN_value.csv"))
+  write.csv(value_list,paste0(getwd(),"/",value_name,".csv"))
 
   # Binding Financial Statement
   print("Binding Financial Statement")
   data_fs = list()
   for (i in 1 : nrow(ticker)) {
-    name = ticker[i, 1]
+    name = paste0(ticker[i,3],".T")
     data_fs[[i]] = read.csv(paste0(getwd(),"/",fs_name,"/",name,"_fs.csv"), row.names = 1)
   }
 
@@ -185,10 +185,10 @@ get_JAPAN_fs = function() {
 
   fs_list = lapply(fs_list, function(x) {rbindlist(x) %>% data.frame()})
   fs_list = lapply(fs_list, function(x) {
-    rownames(x) = ticker[,1] %>% as.character()
+    rownames(x) = paste0(ticker[, 3],".T")
     return(x)
   })
   names(fs_list) = item
-  saveRDS(fs_list, paste0("JAPAN_fs.Rds"))
+  saveRDS(fs_list, paste0(getwd(),"/",fs_name,".Rds"))
 
 }

@@ -155,7 +155,7 @@ get_US_fs = function() {
   rownames(value_list) = ticker[, 1]
   colnames(value_list) = item
 
-  write.csv(value_list,paste0(getwd(),"/","US_value.csv"))
+  write.csv(value_list,paste0(getwd(),"/",value_name,".csv"))
 
   # Binding Financial Statement
   print("Binding Financial Statement")
@@ -188,6 +188,6 @@ get_US_fs = function() {
     return(x)
   })
   names(fs_list) = item
-  saveRDS(fs_list, paste0("US_fs.Rds"))
+  saveRDS(fs_list, paste0(getwd(),"/",fs_name,".Rds"))
 
 }

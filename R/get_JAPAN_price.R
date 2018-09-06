@@ -55,6 +55,7 @@ get_JAPAN_price = function() {
 
   price_list = list()
   for (i in 1 : nrow(ticker)) {
+
     name = paste0(ticker[i, 3],".T")
     price_list[[i]] = as.xts(read.csv(paste0(getwd(),"/",folder_name,"/",name,"_price.csv"), row.names = 1))
     if ((i %% 10) == 0) { print(paste0("Binding Price: ", round((i / nrow(ticker)) * 100,2)," %")) }

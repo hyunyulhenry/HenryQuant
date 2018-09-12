@@ -4,10 +4,10 @@
 \alias{get_KOR_price}
 \title{Download all listed firm's price in Korea Markets.}
 \usage{
-get_KOR_price(num_limit = 10)
+get_KOR_price(src = "yahoo")
 }
 \arguments{
-\item{num_limit}{number of days to download. 1 for 30 days}
+\item{src}{Download from 'yahoo' or 'daum'}
 }
 \description{
 This function will Download all listed firm's Adjusted price in Korea Markets.
@@ -19,6 +19,6 @@ combined prices for csv types
 }
 \examples{
 \dontrun{
- get_KOR_price(num_limit = 10)
+ get_KOR_price()
  }
 }

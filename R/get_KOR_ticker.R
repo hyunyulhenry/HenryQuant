@@ -58,6 +58,8 @@ get_KOR_ticker = function() {
   data = data[!grepl("\uc2a4\ud329", data[, 2]), ] # 스팩 종목 제외
   data = data[substr(data[,2], nchar(data[,2]), nchar(data[,2])) != "\uc6b0", ] # 우선주 제외
   data = data[substr(data[,2], nchar(data[,2])-1, nchar(data[,2])) != "\uc6b0B", ] # 우선주 제외
+  data = data[substr(data[,2], nchar(data[,2])-1, nchar(data[,2])) != "\uc6b0C", ] # 우선주 제외
+  data = data[substr(data[,2], nchar(data[,2]), nchar(data[,2])) != "\ud638", ] # 특별 종목 제외
 
   write.csv(data, "KOR_ticker.csv")
   return(data)

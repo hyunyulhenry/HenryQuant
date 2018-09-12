@@ -22,7 +22,7 @@
 #'  get_KOR_price()
 #'  }
 #' @export
-get_KOR_price = function(src = "yahoo") {
+get_KOR_price = function(src = "daum") {
 
   folder_name = "KOR_price"
   ifelse(dir.exists(folder_name), FALSE, dir.create(folder_name))
@@ -94,7 +94,6 @@ get_KOR_price = function(src = "yahoo") {
       }
 
       price = price[!duplicated(index(price))]
-      price = na.locf(price)
 
       write.csv(as.matrix(price),paste0(getwd(),"/",folder_name,"/",name,"_price.csv"))
       print(paste0(ticker[i, 1]," ",ticker[i,2]," ",round(i / nrow(ticker) * 100,3),"%"))

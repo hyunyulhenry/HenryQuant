@@ -41,7 +41,7 @@ KOR_mkt_value = function(market = "KOSPI", value = "PBR") {
                     type = market,
                     period_selector = 'day',
                     fromdate = '20080101',
-                    todate = '20180825',
+                    todate = gsub("-", "", Sys.Date()-1),
                     pagePath = path)
   )
   OTP = content(OTP_form, "text")

@@ -4,7 +4,7 @@
 \alias{get_KOR_price}
 \title{Download all listed firm's price in Korea Markets.}
 \usage{
-get_KOR_price(src = "yahoo")
+get_KOR_price(src = "daum")
 }
 \arguments{
 \item{src}{Download from 'yahoo' or 'daum'}

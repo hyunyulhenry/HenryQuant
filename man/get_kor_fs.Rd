@@ -4,20 +4,23 @@
 \alias{get_KOR_fs}
 \title{Download all listed firms financial statement data in korea markets}
 \usage{
-get_KOR_fs()
+get_KOR_fs(src = "yahoo")
+}
+\arguments{
+\item{src}{Download from yahoo('yahoo finance)' or fn('Company Guide')}
 }
 \value{
 Save financial statement & and valuation data for all listed firms
 }
 \description{
-This function will Download all listed valuation and financial statement data,
-usually data for the last 4 years
+This function will Download all listed firm's financial statement data and
+valuation data
 }
 \details{
-Downloading data from Naver finance (https://companyinfo.stock.naver.com)
+Downloading data from Yahoo Finance or Company Guide
 }
 \examples{
 \dontrun{
-  get_KOR_fs()
+  get_KOR_fs(src = "yahoo")
   }
 }

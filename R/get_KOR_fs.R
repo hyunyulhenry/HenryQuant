@@ -1,9 +1,9 @@
 #' Download all listed firms financial statement data in korea markets
 #'
-#' This function will Download all listed valuation and financial statement data,
-#' usually data for the last 4 years
+#' This function will Download all listed firm's financial statement data and
+#' valuation data
 #'
-#' Downloading data from Naver finance (https://companyinfo.stock.naver.com)
+#' Downloading data from Yahoo Finance or Company Guide
 #'
 #' @return Save financial statement & and valuation data for all listed firms
 #' @importFrom magrittr "%>%"
@@ -11,150 +11,251 @@
 #' @importFrom rvest html_nodes html_node html_text html_table
 #' @importFrom utils write.csv
 #' @importFrom httr GET
-#' @importFrom jsonlite fromJSON
 #' @importFrom data.table rbindlist
+#'
+#' @param src Download from yahoo('yahoo finance)' or fn('Company Guide')
 #'
 #' @examples
 #' \dontrun{
-#'   get_KOR_fs()
+#'   get_KOR_fs(src = "yahoo")
 #'   }
 #' @export
-get_KOR_fs = function() {
+
+get_KOR_fs = function(src = "yahoo") {
 
   value_name = "KOR_value"
   fs_name = "KOR_fs"
-  ticker = get_KOR_ticker()
 
   ifelse(dir.exists(value_name), FALSE, dir.create(value_name))
   ifelse(dir.exists(fs_name), FALSE, dir.create(fs_name))
 
-  # Download VALUE #
+  ticker = get_KOR_ticker()
 
-  down_value = function(name) {
+  ticker_name = function(src) {
+    if (src == "yahoo") {name = paste0(ticker[i, 1], ".", ticker[i, 'market'])}
+    if (src == "fn") {name = ticker[i, 1]}
+    return(name)
+  }
 
-    data_value = c()
+  # Download Data (From Yahoo) #
+  down_fs = function(name) {
 
+    # Download Financial Statement #
+    data_fs = c()
     tryCatch({
-
-      url = paste0("https://companyinfo.stock.naver.com/v1/company/cF4002.aspx?cmp_cd=",
-                   name,"&frq=0&rpt=5&finGubun=MAIN&frqTyp=0&cn=")
       Sys.setlocale("LC_ALL", "English")
-      data = fromJSON(url)
-      data = data[[2]] %>% data.frame()
+      yahoo.finance.xpath = '//*[@id="Col1-1-Financials-Proxy"]/section/div[3]/table'
+
+      IS = paste0("https://finance.yahoo.com/quote/",name,"/financials?p=",name) %>%
+        GET() %>% read_html() %>% html_nodes(xpath = yahoo.finance.xpath) %>%
+        html_table() %>% data.frame()
+      Sys.sleep(0.5)
+
+      BS = paste0("https://finance.yahoo.com/quote/",name,"/balance-sheet?p=",name) %>%
+        GET() %>% read_html() %>% html_nodes(xpath = yahoo.finance.xpath) %>%
+        html_table() %>% data.frame()
+      Sys.sleep(0.5)
+
+      CF = paste0("https://finance.yahoo.com/quote/",name,"/cash-flow?p=",name) %>%
+        GET() %>% read_html() %>% html_nodes(xpath = yahoo.finance.xpath) %>%
+        html_table() %>% data.frame()
+
       Sys.setlocale("LC_ALL", "Korean")
 
-      data_table = cbind(data$DATA5)
-      rownames(data_table) = data$ACC_NM
+      data_fs = rbind(IS, BS, CF)
+      data_fs = data_fs[!duplicated(data_fs[, 1]), ]
 
-      value.type = c("EPS", "BPS", "CPS", "SPS", "DPS")
-      data_value = data_table[sapply(value.type, function(x) {which(rownames(data_table) == x)}), ]
+      colnames(data_fs) = data_fs[1,]
+      data_fs = data_fs[-1, ]
 
-      url = paste0("https://companyinfo.stock.naver.com/v1/company/c1010001.aspx?cmp_cd=",
-                   name,"&cn=")
-      price = GET(url) %>%
+      rownames(data_fs) = data_fs[,1]
+      data_fs = data_fs[,-1]
+
+      for (j in 1:ncol(data_fs)) {
+        data_fs[, j] = gsub(",", "", data_fs[, j]) %>% as.numeric
+      }
+
+      colnames(data_fs) = sapply(colnames(data_fs), function(x) {
+        substring(x,nchar(x)-3, nchar(x))
+      })
+
+    }, error = function(e) {
+      data_fs <<- NA
+      print(paste0("Error in Ticker: ", name))}
+    )
+
+    # Download Valuation Data #
+    data_value = c()
+    Ratios = yahooQF(c("Previous Close", "Shares Outstanding"))
+
+    tryCatch({
+      data_inform = getQuote(name, what = Ratios)[-1] %>% as.numeric()
+      value.type = c("Net Income Applicable To Common Shares", # Earnings
+                     "Total Stockholder Equity", # Book Value
+                     "Total Cash Flow From Operating Activities", # Cash Flow
+                     "Total Revenue", # Sales
+                     "Dividends Paid") # Div Yield
+
+      data_value = data_fs[sapply(value.type, function(x) {which(rownames(data_fs) == x)}), 1] * 1000
+      data_value = data_inform[1] / ( data_value / data_inform[2])
+      data_value[5] = -(1 / data_value[5])
+      names(data_value) = c("PER", "PBR", "PCR", "PSR", "Div")
+
+    }, error = function(e) {
+      data_value <<- NA
+      print(paste0("Error in Ticker: ", name))}
+    )
+
+    write.csv(data_fs, paste0(getwd(),"/",fs_name,"/",name,"_fs.csv"))
+    write.csv(data_value, paste0(getwd(),"/",value_name,"/",name,"_value.csv"))
+  }
+
+  # Download FS (From FnGuide) #
+  down_fs_fn = function(name) {
+
+    # Download Financial Statement #
+    data_fs = c()
+    tryCatch({
+
+      url = paste0("http://comp.fnguide.com/SVO2/ASP/SVD_Finance.asp?pGB=1&gicode=A",
+                   name)
+
+      Sys.setlocale("LC_ALL", "English")
+
+      data_IS = GET(url) %>%
         read_html() %>%
-        html_nodes(xpath = '//*[@id="cTB11"]/tbody/tr[1]/td/strong') %>%
+        html_node(xpath = '//*[@id="divSonikY"]/table') %>%
+        html_table()
+      data_IS = data_IS[, 1:(ncol(data_IS)-2)]
+      Sys.sleep(0.5)
+
+      data_BS = GET(url) %>%
+        read_html() %>%
+        html_node(xpath = '//*[@id="divDaechaY"]/table') %>%
+        html_table()
+      Sys.sleep(0.5)
+
+      data_CF = GET(url) %>%
+        read_html() %>%
+        html_node(xpath = '//*[@id="divCashY"]/table') %>%
+        html_table()
+      Sys.sleep(0.5)
+
+      Sys.setlocale("LC_ALL", "Korean")
+
+      data_fs = rbind(data_IS, data_BS, data_CF)
+
+      data_fs = data_fs[!duplicated(data_fs[,1]), ]
+      rownames(data_fs) = data_fs[,1]
+      data_fs = data_fs[,-1]
+
+      data_fs = data_fs[, substr(colnames(data_fs), 6,7) == "12"]
+      data_fs = data_fs[, (ncol(data_fs)-2) : ncol(data_fs)]
+
+      for (j in 1:ncol(data_fs)) {
+        data_fs[, j] = gsub(",", "", data_fs[, j]) %>% as.numeric()
+      }
+
+    }, error = function(e) {
+      data_fs <<- NA
+      warning(paste0("Error in Ticker: ", name))}
+    )
+
+    # Download Valuation Data #
+    data_value = c()
+    tryCatch({
+      value.type = c("\ub2f9\uae30\uc21c\uc774\uc775", # Earnings
+                     "\uc790\ubcf8", # Book Value
+                     "\uc601\uc5c5\ud65c\ub3d9\uc73c\ub85c\uc778\ud55c\ud604\uae08\ud750\ub984", # Operating Cash Flow
+                     "\ub9e4\ucd9c\uc561")
+
+      data_value = data_fs[sapply(value.type, function(x) {which(rownames(data_fs) == x)}), ncol(data_fs)]
+
+      url = paste0("http://comp.fnguide.com/SVO2/ASP/SVD_Main.asp?pGB=1&gicode=A",
+                   name)
+
+      data_share = GET(url) %>%
+        read_html() %>%
+        html_nodes(xpath = '//*[@id="svdMainGrid1"]/table/tbody/tr[5]/td[1]') %>%
         html_text()
 
-      price = gsub(",", "", price) %>% as.numeric()
-      data_value = price / data_value
-      data_value[5] = 1/data_value[5]
-      names(data_value) = c("PER", "PBR", "PCR", "PSR", "DY")
+      data_share = strsplit(data_share, "/") %>%
+        unlist() %>%
+        first() %>%
+        gsub(",", "") %>%
+        as.numeric()
 
-      data_value[is.infinite(data_value)] = NA
+      price = GET(url) %>%
+        read_html() %>%
+        html_nodes(xpath = '//*[@id="svdMainGrid1"]/table/tbody/tr[1]/td[1]') %>%
+        html_text()
+
+      price = strsplit(price, "/") %>%
+        unlist() %>%
+        first() %>%
+        gsub(",", "") %>%
+        as.numeric()
+
+      data_value = price / (data_value / data_share * 100000000)
+
+      div.yield = GET(url) %>%
+        read_html() %>%
+        html_nodes(xpath = '//*[@id="corp_group2"]/dl[5]/dd') %>%
+        html_text() %>%
+        gsub("%", "") %>%
+        as.numeric()
+      div.yield = div.yield / 100
+
+      data_value = c(data_value, div.yield)
+      names(data_value) = c("PER", "PBR", "PCR", "PSR", "DY")
 
     }, error = function(e) {
       data_value <<- NA
       warning(paste0("Error in Ticker: ", name))}
     )
 
-    write.csv(data_value, paste0(value_name,"/",name,"_value.csv"))
+    write.csv(data_fs, paste0(getwd(),"/",fs_name,"/",name,"_fs.csv"))
+    write.csv(data_value, paste0(getwd(),"/",value_name,"/",name,"_value.csv"))
   }
 
-
-  # Download FS #
-  down_fs = function(name) {
-    data_fs = list()
-    tryCatch({
-
-      for (j in 0 : 2) {
-        url = paste0("https://companyinfo.stock.naver.com/v1/company/cF3002.aspx?cmp_cd=",
-                     name,"&frq=0&rpt=",j,"&finGubun=MAIN&frqTyp=0&cn=")
-        Sys.setlocale("LC_ALL", "English")
-        data = fromJSON(url)
-        Sys.setlocale("LC_ALL", "Korean")
-
-        yr_name = data[[1]][1:5] %>% data.frame()
-        yr_name = apply(yr_name, 1, function(x) {substr(x, 1, 4)})
-
-        data = data[[2]]
-        data_table = cbind(data$DATA1, data$DATA2, data$DATA3, data$DATA4, data$DATA5)
-        rownames(data_table) = data$ACC_NM
-        colnames(data_table) = yr_name
-
-        data_fs[[j+1]] = data_table
-        Sys.sleep(0.5)
-      }
-
-      data_fs = do.call(rbind, data_fs)
-      data_fs = data_fs[!duplicated(rownames(data_fs)), ]
-
-    }, error = function(e) {
-      data_fs <<- NA
-      warning(paste0("Error in Ticker: ", name))}
-    )
-    write.csv(data_fs, paste0(fs_name,"/",name,"_fs.csv"))
-  }
 
   # Download Data #
-  for (i in 1:nrow(ticker) ) {
+  for(i in 1: nrow(ticker) ) {
 
-    name = ticker[i,1]
-    v = paste0(getwd(),"/",value_name,"/",name,"_value.csv")
+    name = ticker_name(src)
     f = paste0(getwd(),"/",fs_name,"/",name,"_fs.csv")
+    v = paste0(getwd(),"/",value_name,"/",name,"_value.csv")
 
     # Existing Test #
-    if ((file.exists(v) == TRUE) & (file.exists(f) == TRUE)) {
+    if ( (file.exists(f) == TRUE) & (file.exists(v) == TRUE) ) {
       next
+    } else {
+      if (src == "yahoo") {down_fs(name)}
+      if (src == "fn") {down_fs_fn(name)}
     }
 
-    if ((file.exists(v) == TRUE) & (file.exists(f) == FALSE)) {
-      down_fs(name)
-    }
-
-    if ((file.exists(v) == FALSE) & (file.exists(f) == TRUE)) {
-      down_value(name)
-    }
-
-    if ((file.exists(v) == FALSE) & (file.exists(f) == FALSE)) {
-      down_fs(name)
-      down_value(name)
-    }
-
-    #--- End ---#
+    # End #
     print(paste0(name," ",ticker[i,2]," ",round(i / nrow(ticker) * 100,3),"%"))
     Sys.sleep(3)
   }
 
   print("Data download is complete. Data binding is in progress.")
 
-
   # Binding Value #
   print("Binding Value")
   data_value = list()
   for (i in 1 : nrow(ticker)) {
-    name = ticker[i, 1]
+    name = ticker_name(src)
     data_value[[i]] = read.csv(paste0(getwd(),"/",value_name,"/",name,"_value.csv"), row.names = 1)
   }
 
   item = data_value[[1]] %>% rownames()
   value_list = list()
-  temp_data = c()
 
   for (i in 1 : length(item)) {
     value_list[[i]] = lapply(data_value, function(x) {
       if ( item[i] %in% rownames(x) ) {
-        x[which(rownames(x) == item[i]),]
+        x[which(rownames(x) == item[i]), ]
       } else {
         NA
       }
@@ -169,25 +270,25 @@ get_KOR_fs = function() {
 
   write.csv(value_list,paste0(getwd(),"/",value_name,".csv"))
 
-
-  # Binding Financial Statement #
+  # Binding Financial Statement
   print("Binding Financial Statement")
   data_fs = list()
   for (i in 1 : nrow(ticker)) {
-    name = ticker[i, 1] %>% as.character()
+    name = ticker_name(src)
     data_fs[[i]] = read.csv(paste0(getwd(),"/",fs_name,"/",name,"_fs.csv"), row.names = 1)
   }
 
   item = data_fs[[1]] %>% rownames()
   fs_list = list()
-  temp_data = c()
+  num = data_fs[[1]] %>% ncol()
 
   for (i in 1 : length(item)) {
     fs_list[[i]] = lapply(data_fs, function(x) {
       if ( item[i] %in% rownames(x) ) {
-        x[which(rownames(x) == item[i]),]
+        cbind(x[which(rownames(x) == item[i]),],
+              matrix(NA, 1, num - ncol(x)) %>% data.frame())
       } else {
-        matrix(NA, 1, 5) %>% data.frame()
+        matrix(NA, 1, num) %>% data.frame()
       }
     })
 

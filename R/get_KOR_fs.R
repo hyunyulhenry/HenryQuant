@@ -13,15 +13,15 @@
 #' @importFrom httr GET
 #' @importFrom data.table rbindlist
 #'
-#' @param src Download from yahoo('yahoo finance)' or fn('Company Guide')
+#' @param src Download from fn('Company Guide') or yahoo('yahoo finance')
 #'
 #' @examples
 #' \dontrun{
-#'   get_KOR_fs(src = "yahoo")
+#'   get_KOR_fs()
 #'   }
 #' @export
 
-get_KOR_fs = function(src = "yahoo") {
+get_KOR_fs = function(src = "fn") {
 
   value_name = "KOR_value"
   fs_name = "KOR_fs"

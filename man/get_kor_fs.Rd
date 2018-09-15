@@ -4,10 +4,10 @@
 \alias{get_KOR_fs}
 \title{Download all listed firms financial statement data in korea markets}
 \usage{
-get_KOR_fs(src = "yahoo")
+get_KOR_fs(src = "fn")
 }
 \arguments{
-\item{src}{Download from yahoo('yahoo finance)' or fn('Company Guide')}
+\item{src}{Download from fn('Company Guide') or yahoo('yahoo finance')}
 }
 \value{
 Save financial statement & and valuation data for all listed firms
@@ -21,6 +21,6 @@ Downloading data from Yahoo Finance or Company Guide
 }
 \examples{
 \dontrun{
-  get_KOR_fs(src = "yahoo")
+  get_KOR_fs()
   }
 }

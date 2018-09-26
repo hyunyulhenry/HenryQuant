@@ -13,7 +13,7 @@
 #' @importFrom httr GET
 #' @importFrom data.table rbindlist
 #'
-#' @param src Download from fn('Company Guide') or yahoo('yahoo finance')
+#' @param src Download from fn or yahoo
 #'
 #' @examples
 #' \dontrun{
@@ -23,6 +23,7 @@
 
 get_KOR_fs = function(src = "fn") {
 
+  print(src)
   value_name = "KOR_value"
   fs_name = "KOR_fs"
 

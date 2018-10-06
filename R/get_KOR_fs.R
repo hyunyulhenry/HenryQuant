@@ -23,7 +23,6 @@
 
 get_KOR_fs = function(src = "fn") {
 
-  print(src)
   value_name = "KOR_value"
   fs_name = "KOR_fs"
 
@@ -145,7 +144,8 @@ get_KOR_fs = function(src = "fn") {
       Sys.setlocale("LC_ALL", "Korean")
 
       data_fs = rbind(data_IS, data_BS, data_CF)
-
+      data_fs[,1] = gsub("\uacc4\uc0b0\uc5d0 \ucc38\uc5ec\ud55c \uacc4\uc815 \ud3bc\uce58\uae30",
+                         "", data_fs[,1])
       data_fs = data_fs[!duplicated(data_fs[,1]), ]
       rownames(data_fs) = data_fs[,1]
       data_fs = data_fs[,-1]

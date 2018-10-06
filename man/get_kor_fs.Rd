@@ -7,7 +7,7 @@
 get_KOR_fs(src = "fn")
 }
 \arguments{
-\item{src}{Download from fn('Company Guide') or yahoo('yahoo finance')}
+\item{src}{Download from fn or yahoo}
 }
 \value{
 Save financial statement & and valuation data for all listed firms

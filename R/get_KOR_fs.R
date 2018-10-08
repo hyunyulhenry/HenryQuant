@@ -165,7 +165,7 @@ get_KOR_fs = function(src = "fn") {
     # Download Valuation Data #
     data_value = c()
     tryCatch({
-      value.type = c("\ub2f9\uae30\uc21c\uc774\uc775", # Earnings
+      value.type = c("\uc9c0\ubc30\uc8fc\uc8fc\uc21c\uc774\uc775", # Earnings
                      "\uc790\ubcf8", # Book Value
                      "\uc601\uc5c5\ud65c\ub3d9\uc73c\ub85c\uc778\ud55c\ud604\uae08\ud750\ub984", # Operating Cash Flow
                      "\ub9e4\ucd9c\uc561")

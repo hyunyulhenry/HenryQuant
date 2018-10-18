@@ -12,10 +12,11 @@
 #' @importFrom xts xts as.xts
 #' @importFrom zoo na.locf
 #' @importFrom lubridate ymd today
-#' @importFrom magrittr "%>%" set_rownames
+#' @importFrom magrittr "%>%"
 #' @importFrom httr GET
 #' @importFrom xml2 read_html
 #' @importFrom rvest html_node
+#' @importFrom jsonlite fromJSON
 #' @importFrom quantmod Cl getSymbols
 #' @examples
 #' \dontrun{
@@ -36,19 +37,19 @@ get_KOR_price = function(src = "daum") {
   }
 
   # Cleansing #
-  data_cleansing = function(data_table) {
-    data_table = data_table[[1]][,c(1,5)]
-    data_table[data_table == ""] = NA
-    data_table = na.omit(data_table)
+  data_cleansing  = function(data) {
 
-    data_table[,1] = ymd(data_table[,1])
-    data_table[,2] = gsub(",", "", data_table[,2]) %>% as.numeric()
+    data_table = cbind(data$date, data$tradePrice) %>% data.frame()
 
+    data_table[,2] = data_table[,2] %>% as.character() %>% as.numeric()
     rownames(data_table) = data_table[,1]
     data_table[,1] = NULL
+
     data_table = as.xts(data_table)
+    data_table = data_table[!duplicated(index(data_table))]
 
     return(data_table)
+
   }
 
   for(i in 1 : nrow(ticker) ) {
@@ -69,37 +70,25 @@ get_KOR_price = function(src = "daum") {
       }
 
       if (src == "daum") {
-        price = list(xts(NA, order.by = Sys.Date()))
+        price = xts(NA, order.by = Sys.Date())
 
         tryCatch({
+          url = paste0("http://finance.daum.net/api/charts/A",name,
+                       "/days?limit=1000&adjusted=true")
 
-          for (j in 1:10) {
-            url = paste0("http://finance.daum.net/item/quote_yyyymmdd_sub.daum?page=",
-                         j,"&code=",name,"&modify=1")
-
-            Sys.setlocale("LC_ALL", "English")
-            data = GET(url)
-            data_table = read_html(data) %>%
-              html_table()
-            Sys.setlocale("LC_ALL", "Korean")
-
-            price[[j]] = data_cleansing(data_table)
-            Sys.sleep(0.5)
-          }
+          data = fromJSON(url)
+          data = data[[1]]
+          price = data_cleansing(data)
 
         }, error = function(e) {
           warning(paste0("Error in Ticker: ", name))}
         )
-        price = do.call(rbind, price)
       }
-
-      price = price[!duplicated(index(price))]
 
       write.csv(as.matrix(price),paste0(getwd(),"/",folder_name,"/",name,"_price.csv"))
       print(paste0(ticker[i, 1]," ",ticker[i,2]," ",round(i / nrow(ticker) * 100,3),"%"))
 
       Sys.sleep(3)
-
     }
   }
 

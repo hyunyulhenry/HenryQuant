@@ -23,34 +23,12 @@ get_US_fs = function() {
   ifelse(dir.exists(fs_name), FALSE, dir.create(fs_name))
 
   ticker = get_US_ticker()
-  Ratios = yahooQF(c("P/E Ratio", "Price/Book", "Dividend Yield"))
 
-  #--- Download VALUE ---#
-
-  down_value = function(name) {
-
-    data_value = c()
-
-    tryCatch({
-      Ratios = yahooQF(c("P/E Ratio", "Price/Book", "Dividend Yield"))
-      data_value = getQuote(name, what = Ratios)[-1]
-
-    }, error = function(e) {
-      data_value <<- NA
-      print(paste0("Error in Ticker: ", name))}
-    )
-
-    write.csv(data_value,paste0(getwd(),"/",value_name,"/",name,"_value.csv"))
-
-  }
-
-
-  #--- Download FS ---#
-
+  # Download Data (From Yahoo) #
   down_fs = function(name) {
 
+    # Download Financial Statement #
     data_fs = c()
-
     tryCatch({
       Sys.setlocale("LC_ALL", "English")
       yahoo.finance.xpath = '//*[@id="Col1-1-Financials-Proxy"]/section/div[3]/table'
@@ -68,6 +46,8 @@ get_US_fs = function() {
       CF = paste0("https://finance.yahoo.com/quote/",name,"/cash-flow?p=",name) %>%
         GET() %>% read_html() %>% html_nodes(xpath = yahoo.finance.xpath) %>%
         html_table() %>% data.frame()
+
+      Sys.setlocale("LC_ALL", "Korean")
 
       data_fs = rbind(IS, BS, CF)
       data_fs = data_fs[!duplicated(data_fs[, 1]), ]
@@ -91,36 +71,47 @@ get_US_fs = function() {
       print(paste0("Error in Ticker: ", name))}
     )
 
+    # Download Valuation Data #
+    data_value = c()
+    Ratios = yahooQF(c("Previous Close", "Shares Outstanding"))
+
+    tryCatch({
+      data_inform = getQuote(name, what = Ratios)[-1] %>% as.numeric()
+      value.type = c("Net Income Applicable To Common Shares", # Earnings
+                     "Total Stockholder Equity", # Book Value
+                     "Total Cash Flow From Operating Activities", # Cash Flow
+                     "Total Revenue", # Sales
+                     "Dividends Paid") # Div Yield
+
+      data_value = data_fs[sapply(value.type, function(x) {which(rownames(data_fs) == x)}), 1] * 1000
+      data_value = data_inform[1] / ( data_value / data_inform[2])
+      data_value[5] = -(1 / data_value[5])
+      names(data_value) = c("PER", "PBR", "PCR", "PSR", "Div")
+
+    }, error = function(e) {
+      data_value <<- NA
+      print(paste0("Error in Ticker: ", name))}
+    )
+
     write.csv(data_fs, paste0(getwd(),"/",fs_name,"/",name,"_fs.csv"))
+    write.csv(data_value, paste0(getwd(),"/",value_name,"/",name,"_value.csv"))
   }
 
-
-  #--- Download Data ---#
+  # Download Data #
   for(i in 1: nrow(ticker) ) {
 
-    name = ticker[i,1]
-    v = paste0(getwd(),"/",value_name,"/",name,"_value.csv")
+    name = ticker[i, 1]
     f = paste0(getwd(),"/",fs_name,"/",name,"_fs.csv")
+    v = paste0(getwd(),"/",value_name,"/",name,"_value.csv")
 
-    #--- Existing Test ---#
-    if ((file.exists(v) == TRUE) & (file.exists(f) == TRUE)) {
+    # Existing Test #
+    if ( (file.exists(f) == TRUE) & (file.exists(v) == TRUE) ) {
       next
-    }
-
-    if ((file.exists(v) == TRUE) & (file.exists(f) == FALSE)) {
+    } else {
       down_fs(name)
     }
 
-    if ((file.exists(v) == FALSE) & (file.exists(f) == TRUE)) {
-      down_value(name)
-    }
-
-    if ((file.exists(v) == FALSE) & (file.exists(f) == FALSE)) {
-      down_fs(name)
-      down_value(name)
-    }
-
-    #--- End ---#
+    # End #
     print(paste0(name," ",ticker[i,2]," ",round(i / nrow(ticker) * 100,3),"%"))
     Sys.sleep(3)
   }
@@ -137,7 +128,6 @@ get_US_fs = function() {
 
   item = data_value[[1]] %>% colnames()
   value_list = list()
-  temp_data = c()
 
   for (i in 1 : length(item)) {
     value_list[[i]] = lapply(data_value, function(x) {
@@ -167,7 +157,6 @@ get_US_fs = function() {
 
   item = data_fs[[1]] %>% rownames()
   fs_list = list()
-  temp_data = c()
 
   for (i in 1 : length(item)) {
     fs_list[[i]] = lapply(data_fs, function(x) {

@@ -213,6 +213,8 @@ get_KOR_fs = function(src = "fn") {
       data_value = c(data_value, div.yield)
       names(data_value) = c("PER", "PBR", "PCR", "PSR", "DY")
 
+      data_value[is.infinite(data_value)] = NA
+
     }, error = function(e) {
       data_value <<- NA
       warning(paste0("Error in Ticker: ", name))}

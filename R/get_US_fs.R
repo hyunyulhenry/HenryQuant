@@ -126,13 +126,13 @@ get_US_fs = function() {
     data_value[[i]] = read.csv(paste0(getwd(),"/",value_name,"/",name,"_value.csv"), row.names = 1)
   }
 
-  item = data_value[[1]] %>% colnames()
+  item = data_value[[1]] %>% rownames()
   value_list = list()
 
   for (i in 1 : length(item)) {
     value_list[[i]] = lapply(data_value, function(x) {
-      if ( item[i] %in% colnames(x) ) {
-        x[which(colnames(x) == item[i])]
+      if ( item[i] %in% rownames(x) ) {
+        x[which(rownames(x) == item[i]), ]
       } else {
         NA
       }

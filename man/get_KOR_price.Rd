@@ -4,10 +4,10 @@
 \alias{get_KOR_price}
 \title{Download all listed firm's price in Korea Markets.}
 \usage{
-get_KOR_price(src = "daum")
+get_KOR_price(src = "naver")
 }
 \arguments{
-\item{src}{Download from 'yahoo' or 'daum'}
+\item{src}{Download from 'yahoo' or 'naver'}
 }
 \description{
 This function will Download all listed firm's Adjusted price in Korea Markets.

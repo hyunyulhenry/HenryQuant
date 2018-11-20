@@ -6,7 +6,7 @@
 #' It will aumomatically save individual stock prices and
 #' combined prices for csv types
 #'
-#' @param src Download from 'yahoo' or 'daum'
+#' @param src Download from 'yahoo' or 'naver'
 #'
 #' @importFrom utils write.csv
 #' @importFrom xts xts as.xts
@@ -16,14 +16,13 @@
 #' @importFrom httr GET
 #' @importFrom xml2 read_html
 #' @importFrom rvest html_node
-#' @importFrom jsonlite fromJSON
 #' @importFrom quantmod Cl getSymbols
 #' @examples
 #' \dontrun{
 #'  get_KOR_price()
 #'  }
 #' @export
-get_KOR_price = function(src = "daum") {
+get_KOR_price = function(src = "naver") {
 
   folder_name = "KOR_price"
   ifelse(dir.exists(folder_name), FALSE, dir.create(folder_name))
@@ -32,23 +31,27 @@ get_KOR_price = function(src = "daum") {
 
   ticker_name = function(src) {
     if (src == "yahoo") {name = paste0(ticker[i, 1], ".", ticker[i, 'market'])}
-    if (src == "daum") {name = ticker[i, 1]}
+    if (src == "naver") {name = ticker[i, 1]}
     return(name)
   }
 
   # Cleansing #
   data_cleansing  = function(data) {
 
-    data_table = cbind(data$date, data$tradePrice) %>% data.frame()
+    data = lapply(data, function(x) {
+      x[c(1, 5)] %>% t() %>% data.frame()
+    })
 
-    data_table[,2] = data_table[,2] %>% as.character() %>% as.numeric()
-    rownames(data_table) = data_table[,1]
-    data_table[,1] = NULL
+    data = do.call(rbind, data)
 
-    data_table = as.xts(data_table)
-    data_table = data_table[!duplicated(index(data_table))]
+    data[,2] = as.numeric(as.character(data[,2]))
 
-    return(data_table)
+    rownames(data) = ymd(data[,1]) %>% as.character
+    data[,1] = NULL
+
+    data = as.xts(data)
+
+    return(data)
 
   }
 
@@ -69,15 +72,19 @@ get_KOR_price = function(src = "daum") {
         })
       }
 
-      if (src == "daum") {
+      if (src == "naver") {
         price = xts(NA, order.by = Sys.Date())
 
         tryCatch({
-          url = paste0("http://finance.daum.net/api/charts/A",name,
-                       "/days?limit=1000&adjusted=true")
+          url = paste0("https://fchart.stock.naver.com/sise.nhn?symbol="
+                       ,name,"&timeframe=day&count=1000&requestType=0")
 
-          data = fromJSON(url)
-          data = data[[1]]
+          data = GET(url) %>%
+            read_html %>%
+            html_nodes("item") %>%
+            html_attr("data") %>%
+            strsplit("\\|")
+
           price = data_cleansing(data)
 
         }, error = function(e) {

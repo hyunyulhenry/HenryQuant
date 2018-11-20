@@ -12,6 +12,7 @@
 #' @export
 get_KOR_ticker = function() {
 
+  print("Ticker Download")
   data = list()
 
   for (i in 0:1) {

@@ -4,10 +4,10 @@
 \alias{get_KOR_ticker}
 \title{Download all listed firm's ticker in KOREA Markets.}
 \usage{
-get_KOR_ticker()
+get_KOR_ticker(src = "krx")
 }
-\value{
-ticker, name
+\arguments{
+\item{src}{Download from 'krx' or 'naver'}
 }
 \description{
 This function will Download all listed firm's ticker, name in KOR Markets.

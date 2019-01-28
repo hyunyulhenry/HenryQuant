@@ -41,11 +41,10 @@ get_KOR_ticker = function(src = 'krx') {
       down_data = list(code = otp)
 
       down = POST(down_url, query = down_data,
-                  add_headers(referer = gen_otp_url),
-                  write_disk(tf <- tempfile(fileext = '.csv')))
-      data_sector = read_csv(tf)
+                  add_headers(referer = gen_otp_url)) %>%
+        read_html() %>% html_text() %>% read_csv()
 
-      data_sector = data_sector[, c(1:4, 7)]
+      data_sector = down[, c(1:4, 7)]
       write.csv(data_sector, 'data_sector.csv')
 
       return(data_sector)
@@ -77,17 +76,21 @@ get_KOR_ticker = function(src = 'krx') {
 
     date = gsub("-", "", Sys.Date()-1)
 
-    down_table = list()
+    # Finding Recent Operating Date
+    test.date = F
 
-    while (length(down_table) == 0) {
+    while (test.date == F) {
       tryCatch({
         down_value(date)
+        test.date = T
       }, error = function(e) {
         date <<- as.character(as.numeric(date) - 1)
       })
-      down_table[[1]] = down_sector(date)
-      down_table[[2]] = down_value(date)
     }
+
+    down_table = list()
+    down_table[[1]] = down_sector(date)
+    down_table[[2]] = down_value(date)
 
     data = merge(down_table[[1]], down_table[[2]], by = '\uc885\ubaa9\ucf54\ub4dc')
     data = data[order(-data['\uc2dc\uac00\ucd1d\uc561\u0028\uc6d0\u0029']), ]

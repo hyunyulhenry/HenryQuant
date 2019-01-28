@@ -28,5 +28,4 @@ Imports: xts,
     quadprog,
     httr,
     data.table,
-    jsonlite,
     readxl

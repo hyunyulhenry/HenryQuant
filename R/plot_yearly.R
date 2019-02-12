@@ -26,9 +26,10 @@ plot_yearly = function(R) {
     data.frame() %>%
     rownames_to_column(var = 'Date') %>%
     mutate(Date = year(Date)) %>%
-    gather(key, value, -Date)
+    gather(key, value, -Date) %>%
+    mutate(key = factor(key, levels = unique(key)))
 
-  ggplot(R.yr, aes(x = Date, y = value, fill = key)) +
+  ggplot(R.yr, aes(x = Date, y = value, fill = factor(key))) +
     geom_bar(position = "dodge", stat = "identity") +
     ggtitle('Yearly Return') +
     xlab(NULL) +

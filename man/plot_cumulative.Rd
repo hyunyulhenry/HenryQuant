@@ -4,10 +4,12 @@
 \alias{plot_cumulative}
 \title{Plot Cumulative Return}
 \usage{
-plot_cumulative(R)
+plot_cumulative(R, ylog = FALSE)
 }
 \arguments{
 \item{R}{Return Data}
+
+\item{ylog}{TRUE/FALSE set the y-axis to logarithmic scale}
 }
 \description{
 This function plot Cumulative return

@@ -4,10 +4,12 @@
 \alias{plot_yearly}
 \title{Plot yearly Return}
 \usage{
-plot_yearly(R)
+plot_yearly(R, label.text = TRUE)
 }
 \arguments{
 \item{R}{Return Data}
+
+\item{label.text}{TRUE/FALSE set the return label above graph}
 }
 \description{
 This function plot yearly return

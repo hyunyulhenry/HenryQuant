@@ -1,38 +1,34 @@
-#' Plot Drawdown
+#' Plot Stacked Barchart
 #'
-#' This function plot Drawdown
+#' This function plot Stacked Barchart
 #'
-#' @param R Return Data
-#' @importFrom zoo na.fill
-#' @importFrom PerformanceAnalytics Drawdowns
-#' @importFrom ggplot2 scale_y_continuous
+#' @param df Time Series data
+#' @importFrom ggplot2 geom_area guides guide_legend
+#'
 #' @examples
-#'   R = asset_data
-#'   plot_drawdown(R[,1])
+#' \dontrun{
+#'   plot_StackedBar(df)
+#'   }
 #' @export
-#'
-plot_drawdown = function(R) {
+plot_StackedBar = function(df) {
 
   Date = key = value = NULL
 
-  R = na.fill(R, 0) %>%
-    as.xts()
-  R.drawdown = Drawdowns(R) %>%
+  df = df %>%
     data.frame() %>%
     rownames_to_column(var = 'Date') %>%
     mutate(Date = as.Date(Date)) %>%
     gather(key, value, -Date) %>%
     mutate(key = factor(key, levels = unique(key)))
 
-  ggplot(R.drawdown, aes(x = Date, group = key, color = key)) +
-    geom_line(aes(y = value)) +
-    ggtitle('Portfolio Drawdown') +
+  ggplot(df, aes(x = Date, y = value)) +
+    geom_area(aes(color = key, fill = key), position = 'stack') +
     xlab(NULL) +
     ylab(NULL) +
     theme_bw() +
     scale_x_date(date_breaks="years", date_labels="%Y",
                  expand = c(0, 0)) +
-    scale_y_continuous(expand = c(0, 0.02, 0, 0)) +
+    scale_y_continuous(expand = c(0, 0)) +
     theme(plot.title = element_text(hjust = 0.5,
                                     size = 12),
           legend.position = 'bottom',

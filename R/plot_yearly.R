@@ -3,6 +3,7 @@
 #' This function plot yearly return
 #'
 #' @param R Return Data
+#' @param label.text TRUE/FALSE set the return label above graph
 #' @importFrom xts apply.yearly
 #' @importFrom dplyr mutate
 #' @importFrom tibble rownames_to_column
@@ -17,7 +18,7 @@
 #'   plot_yearly(R)
 #' @export
 
-plot_yearly = function(R) {
+plot_yearly = function(R, label.text = TRUE) {
 
   Date = key = value = NULL
 
@@ -29,7 +30,7 @@ plot_yearly = function(R) {
     gather(key, value, -Date) %>%
     mutate(key = factor(key, levels = unique(key)))
 
-  ggplot(R.yr, aes(x = Date, y = value, fill = factor(key))) +
+  p = ggplot(R.yr, aes(x = Date, y = value, fill = key)) +
     geom_bar(position = "dodge", stat = "identity") +
     ggtitle('Yearly Return') +
     xlab(NULL) +
@@ -45,9 +46,16 @@ plot_yearly = function(R) {
           axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
           panel.grid.minor.x = element_blank()
     ) +
-    geom_text(aes(label = paste(round(value * 100, 2), "%"),
-                  vjust = ifelse(value >= 0, -0.5, 1.5)),
-              position = position_dodge(width = 1),
-              size = 3)
+    guides(fill = guide_legend(byrow = TRUE))
 
-}
+  if (label.text == TRUE) {
+    p = p +
+        geom_text(aes(label = paste(round(value * 100, 2), "%"),
+                      vjust = ifelse(value >= 0, -0.5, 1.5)),
+                  position = position_dodge(width = 1),
+                  size = 3)
+    }
+
+  p
+
+  }

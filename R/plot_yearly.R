@@ -55,7 +55,6 @@ plot_yearly = function(R, label.text = TRUE) {
                   position = position_dodge(width = 1),
                   size = 3)
     }
-
   p
 
   }

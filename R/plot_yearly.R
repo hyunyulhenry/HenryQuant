@@ -48,6 +48,7 @@ plot_yearly = function(R) {
     geom_text(aes(label = paste(round(value * 100, 2), "%"),
                   vjust = ifelse(value >= 0, -0.5, 1.5)),
               position = position_dodge(width = 1),
-              size = 3)
+              size = 3) +
+    guides(color = guide_legend(byrow = TRUE))
 
 }

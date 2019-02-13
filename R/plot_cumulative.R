@@ -3,6 +3,7 @@
 #' This function plot Cumulative return
 #'
 #' @param R Return Data
+#' @param ylog TRUE/FALSE set the y-axis to logarithmic scale,
 #' @importFrom xts apply.yearly
 #' @importFrom dplyr mutate
 #' @importFrom tibble rownames_to_column
@@ -15,12 +16,22 @@
 #'   plot_cumulative(R[,1])
 #' @export
 #'
-plot_cumulative = function(R) {
+plot_cumulative = function(R, ylog = FALSE) {
 
   Date = key = value = NULL
 
   R = as.xts(R)
-  R.cum = cumprod(1 + R) %>%
+
+  if (ylog == FALSE) {
+    R.cum = cumprod(1 + R) - 1
+  }
+
+  if (ylog == TRUE) {
+    R = log(1 + R)
+    R.cum = cumsum(R)
+  }
+
+  R.cum = R.cum %>%
     data.frame() %>%
     rownames_to_column(var = 'Date') %>%
     mutate(Date = as.Date(Date)) %>%
@@ -40,6 +51,7 @@ plot_cumulative = function(R) {
           legend.position = 'bottom',
           legend.title = element_blank(),
           axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
-          panel.grid.minor.x = element_blank())
+          panel.grid.minor.x = element_blank()) +
+    guides(color = guide_legend(byrow = TRUE))
 
 }

@@ -31,5 +31,4 @@ Imports: xts,
     readxl,
     dplyr,
     ggplot2,
-    tidyr,
-    rlang
+    tidyr

@@ -20,8 +20,8 @@ plot_cumulative = function(R, ylog = FALSE) {
 
   Date = key = value = NULL
 
-  R = na.fill(R, 0) %>%
-    as.xts()
+  R = as.xts(R) %>%
+    na.fill(0)
 
   if (ylog == FALSE) {
     R.cum = cumprod(1 + R) - 1

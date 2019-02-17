@@ -15,8 +15,9 @@ plot_drawdown = function(R) {
 
   Date = key = value = NULL
 
-  R = na.fill(R, 0) %>%
-    as.xts()
+  R = as.xts(R) %>%
+    na.fill(0)
+
   R.drawdown = Drawdowns(R) %>%
     data.frame() %>%
     rownames_to_column(var = 'Date') %>%

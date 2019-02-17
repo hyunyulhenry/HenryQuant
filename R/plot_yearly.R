@@ -22,7 +22,9 @@ plot_yearly = function(R, label.text = TRUE) {
 
   Date = key = value = NULL
 
-  R = as.xts(R)
+  R = as.xts(R) %>%
+    na.fill(0)
+
   R.yr = apply.yearly(R, Return.cumulative) %>%
     data.frame() %>%
     rownames_to_column(var = 'Date') %>%

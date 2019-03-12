@@ -15,6 +15,8 @@ plot_cumulative(R, ylog = FALSE)
 This function plot Cumulative return
 }
 \examples{
+ \dontrun{
   R = asset_data
-  plot_cumulative(R[,1])
+  plot_cumulative(R, ylog = TRUE)
+  }
 }

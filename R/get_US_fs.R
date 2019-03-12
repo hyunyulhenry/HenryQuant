@@ -47,23 +47,23 @@ get_US_fs = function() {
         GET() %>% read_html() %>% html_nodes(xpath = yahoo.finance.xpath) %>%
         html_table() %>% data.frame()
 
-      Sys.setlocale("LC_ALL", "Korean")
-
       data_fs = rbind(IS, BS, CF)
       data_fs = data_fs[!duplicated(data_fs[, 1]), ]
+
+      rownames(data_fs) = NULL
+      data_fs = column_to_rownames(data_fs, var = names(data_fs)[1])
 
       colnames(data_fs) = data_fs[1,]
       data_fs = data_fs[-1, ]
 
-      rownames(data_fs) = data_fs[,1]
-      data_fs = data_fs[,-1]
+      data_fs = data_fs[, substr(colnames(data_fs), 1,2) == "12"]
 
       for (j in 1:ncol(data_fs)) {
-        data_fs[, j] = gsub(",", "", data_fs[, j]) %>% as.numeric
+        data_fs[, j] = str_replace_all(data_fs[,j], ',', '') %>% as.numeric()
       }
 
       colnames(data_fs) = sapply(colnames(data_fs), function(x) {
-        substring(x,nchar(x)-3, nchar(x))
+        substr(x,nchar(x)-3, nchar(x))
       })
 
     }, error = function(e) {
@@ -80,13 +80,11 @@ get_US_fs = function() {
       value.type = c("Net Income Applicable To Common Shares", # Earnings
                      "Total Stockholder Equity", # Book Value
                      "Total Cash Flow From Operating Activities", # Cash Flow
-                     "Total Revenue", # Sales
-                     "Dividends Paid") # Div Yield
+                     "Total Revenue")
 
-      data_value = data_fs[sapply(value.type, function(x) {which(rownames(data_fs) == x)}), 1] * 1000
+      data_value = data_fs[match(value.type, rownames(data_fs)), 1] * 1000
       data_value = data_inform[1] / ( data_value / data_inform[2])
-      data_value[5] = -(1 / data_value[5])
-      names(data_value) = c("PER", "PBR", "PCR", "PSR", "Div")
+      names(data_value) = c("PER", "PBR", "PCR", "PSR")
 
     }, error = function(e) {
       data_value <<- NA

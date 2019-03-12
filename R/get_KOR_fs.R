@@ -11,7 +11,8 @@
 #' @importFrom rvest html_nodes html_node html_text html_table
 #' @importFrom utils write.csv
 #' @importFrom httr GET
-#' @importFrom data.table rbindlist
+#' @importFrom stringr str_replace_all
+#' @importFrom dplyr bind_rows
 #'
 #' @param src Download from fn or yahoo
 #'
@@ -121,25 +122,23 @@ get_KOR_fs = function(src = "fn") {
                    name)
 
       Sys.setlocale("LC_ALL", "English")
+      data = GET(url)
 
-      data_IS = GET(url) %>%
+      data_IS = data %>%
         read_html() %>%
         html_node(xpath = '//*[@id="divSonikY"]/table') %>%
         html_table()
       data_IS = data_IS[, 1:(ncol(data_IS)-2)]
-      Sys.sleep(0.5)
 
-      data_BS = GET(url) %>%
+      data_BS = data %>%
         read_html() %>%
         html_node(xpath = '//*[@id="divDaechaY"]/table') %>%
         html_table()
-      Sys.sleep(0.5)
 
-      data_CF = GET(url) %>%
+      data_CF = data %>%
         read_html() %>%
         html_node(xpath = '//*[@id="divCashY"]/table') %>%
         html_table()
-      Sys.sleep(0.5)
 
       Sys.setlocale("LC_ALL", "Korean")
 
@@ -147,14 +146,13 @@ get_KOR_fs = function(src = "fn") {
       data_fs[,1] = gsub("\uacc4\uc0b0\uc5d0 \ucc38\uc5ec\ud55c \uacc4\uc815 \ud3bc\uce58\uae30",
                          "", data_fs[,1])
       data_fs = data_fs[!duplicated(data_fs[,1]), ]
-      rownames(data_fs) = data_fs[,1]
-      data_fs = data_fs[,-1]
+      rownames(data_fs) = NULL
+      data_fs = column_to_rownames(data_fs, var = names(data_fs)[1])
 
       data_fs = data_fs[, substr(colnames(data_fs), 6,7) == "12"]
-      data_fs = data_fs[, (ncol(data_fs)-2) : ncol(data_fs)]
 
       for (j in 1:ncol(data_fs)) {
-        data_fs[, j] = gsub(",", "", data_fs[, j]) %>% as.numeric()
+        data_fs[,j] = str_replace_all(data_fs[,j], ',', '') %>% as.numeric()
       }
 
     }, error = function(e) {
@@ -170,50 +168,35 @@ get_KOR_fs = function(src = "fn") {
                      "\uc601\uc5c5\ud65c\ub3d9\uc73c\ub85c\uc778\ud55c\ud604\uae08\ud750\ub984", # Operating Cash Flow
                      "\ub9e4\ucd9c\uc561")
 
-      data_value = data_fs[sapply(value.type, function(x) {which(rownames(data_fs) == x)}), ncol(data_fs)]
+      value_index = data_fs[match(value.type, rownames(data_fs)), ncol(data_fs)]
 
       url = paste0("http://comp.fnguide.com/SVO2/ASP/SVD_Main.asp?pGB=1&gicode=A",
                    name)
+      data = GET(url)
 
-      data_share = GET(url) %>%
+      price = data %>%
         read_html() %>%
-        html_nodes(xpath = '//*[@id="svdMainGrid1"]/table/tbody/tr[5]/td[1]') %>%
-        html_text()
-
-      data_share = strsplit(data_share, "/") %>%
-        unlist() %>%
-        first()
-
-      data_share = gsub(",", "", data_share) %>%
+        html_node(xpath = '//*[@id="svdMainChartTxt11"]') %>%
+        html_text() %>%
+        str_replace_all(',', '') %>%
         as.numeric()
 
-      price = GET(url) %>%
+      share = data %>%
         read_html() %>%
-        html_nodes(xpath = '//*[@id="svdMainGrid1"]/table/tbody/tr[1]/td[1]') %>%
-        html_text()
+        html_node(xpath = '//*[@id="svdMainGrid1"]/table/tbody/tr[7]/td[1]') %>%
+        html_text() %>%
+        strsplit('/') %>%
+        unlist()
 
-      price = strsplit(price, "/") %>%
-        unlist() %>%
-        first()
-
-      price = gsub(",", "", price) %>%
+      share = share[1] %>%
+        str_replace_all(',', '') %>%
         as.numeric()
 
-      data_value = price / (data_value / data_share * 100000000)
-
-      div.yield = GET(url) %>%
-        read_html() %>%
-        html_nodes(xpath = '//*[@id="corp_group2"]/dl[5]/dd') %>%
-        html_text()
-
-      div.yield = gsub("%", "", div.yield) %>%
-        as.numeric()
-      div.yield = div.yield / 100
-
-      data_value = c(data_value, div.yield)
-      names(data_value) = c("PER", "PBR", "PCR", "PSR", "DY")
+      data_value = price / (value_index * 100000000/ share)
+      names(data_value) = c('PER', 'PBR', 'PCR', 'PSR')
 
       data_value[is.infinite(data_value)] = NA
+      data_value[data_value < 0] = NA
 
     }, error = function(e) {
       data_value <<- NA
@@ -241,7 +224,7 @@ get_KOR_fs = function(src = "fn") {
     }
 
     # End #
-    print(paste0(name," ",ticker[i,2]," ",round(i / nrow(ticker) * 100,3),"%"))
+    print(paste0(name," ",ticker[i, '\uc885\ubaa9\uba85']," ",round(i / nrow(ticker) * 100,3),"%"))
     Sys.sleep(3)
   }
 
@@ -252,28 +235,14 @@ get_KOR_fs = function(src = "fn") {
   data_value = list()
   for (i in 1 : nrow(ticker)) {
     name = ticker_name(src)
-    data_value[[i]] = read.csv(paste0(getwd(),"/",value_name,"/",name,"_value.csv"), row.names = 1)
+    data_value[[i]] = read.csv(paste0(getwd(),"/",value_name,"/",name,"_value.csv"), row.names = 1) %>%
+      t() %>% data.frame()
   }
 
-  item = data_value[[1]] %>% rownames()
-  value_list = list()
+  data_value = bind_rows(data_value)
+  value_list = data_value[colnames(data_value) != 'X1']
 
-  for (i in 1 : length(item)) {
-    value_list[[i]] = lapply(data_value, function(x) {
-      if ( item[i] %in% rownames(x) ) {
-        x[which(rownames(x) == item[i]), ]
-      } else {
-        NA
-      }
-    })
-  }
-
-  value_list = lapply(value_list, function(x) {do.call(rbind, x)})
-  value_list = do.call(cbind, value_list) %>% data.frame()
-
-  rownames(value_list) = ticker[, 1]
-  colnames(value_list) = item
-
+  rownames(value_list) = ticker[, '\uc885\ubaa9\ucf54\ub4dc']
   write.csv(value_list,paste0(getwd(),"/",value_name,".csv"))
 
   # Binding Financial Statement
@@ -286,26 +255,28 @@ get_KOR_fs = function(src = "fn") {
 
   item = data_fs[[1]] %>% rownames()
   fs_list = list()
-  num = data_fs[[1]] %>% ncol()
 
   for (i in 1 : length(item)) {
     fs_list[[i]] = lapply(data_fs, function(x) {
       if ( item[i] %in% rownames(x) ) {
-        cbind(x[which(rownames(x) == item[i]),],
-              matrix(NA, 1, num - ncol(x)) %>% data.frame())
+        x[which(rownames(x) == item[i]), ]
       } else {
-        matrix(NA, 1, num) %>% data.frame()
+        data.frame(NA)
       }
     })
 
     if ((i %% 10) == 0) { print(paste0("Binding Financial Statement: ", round((i / length(item)) * 100,2)," %")) }
   }
 
-  fs_list = lapply(fs_list, function(x) {rbindlist(x) %>% data.frame()})
   fs_list = lapply(fs_list, function(x) {
-    rownames(x) = ticker[,1] %>% as.character()
-    return(x)
+
+    fs_bind = bind_rows(x)
+    fs_bind = fs_bind[colnames(fs_bind) != 'NA.']
+    rownames(fs_bind) = ticker[, '\uc885\ubaa9\ucf54\ub4dc']
+    return(fs_bind)
+
   })
+
   names(fs_list) = item
   saveRDS(fs_list, paste0(getwd(),"/",fs_name,".Rds"))
 

@@ -35,26 +35,6 @@ get_KOR_price = function(src = "naver") {
     return(name)
   }
 
-  # Cleansing #
-  data_cleansing  = function(data) {
-
-    data = lapply(data, function(x) {
-      x[c(1, 5)] %>% t() %>% data.frame()
-    })
-
-    data = do.call(rbind, data)
-
-    data[,2] = as.numeric(as.character(data[,2]))
-
-    rownames(data) = ymd(data[,1]) %>% as.character
-    data[,1] = NULL
-
-    data = as.xts(data)
-
-    return(data)
-
-  }
-
   for(i in 1 : nrow(ticker) ) {
     name = ticker_name(src)
 
@@ -85,15 +65,25 @@ get_KOR_price = function(src = "naver") {
             html_attr("data") %>%
             strsplit("\\|")
 
-          price = data_cleansing(data)
+          price = do.call(rbind, data) %>% data.frame()
+          price = price[c(1,5)] # 첫번째 열은 날짜, 다섯번째 열은 종가
+
+          price[,1] = ymd(price[,1])
+          price = column_to_rownames(price, var = 'X1')
+
+          price[,1] = as.character(price[,1]) %>% as.numeric()
+          price = as.xts(price)
+          price = price[!duplicated(index(price))]
 
         }, error = function(e) {
           warning(paste0("Error in Ticker: ", name))}
         )
       }
 
-      write.csv(as.matrix(price),paste0(getwd(),"/",folder_name,"/",name,"_price.csv"))
-      print(paste0(ticker[i, 1]," ",ticker[i,2]," ",round(i / nrow(ticker) * 100,3),"%"))
+      write.csv(data.frame(price),paste0(getwd(),"/",folder_name,"/",name,"_price.csv"))
+      print(paste0(ticker[i, '\uc885\ubaa9\ucf54\ub4dc']," ",
+                   ticker[i, '\uc885\ubaa9\uba85']," ",
+                   round(i / nrow(ticker) * 100,3),"%"))
 
       Sys.sleep(3)
     }
@@ -106,12 +96,12 @@ get_KOR_price = function(src = "naver") {
   for (i in 1 : nrow(ticker)){
     name = ticker_name(src)
     price_list[[i]] = as.xts(read.csv(paste0(getwd(),"/",folder_name,"/",name,"_price.csv"), row.names = 1))
-    if ((i %% 10) == 0) { print(paste0("Binding Price: ", round((i / nrow(ticker)) * 100,2)," %")) }
+    if ((i %% 100) == 0) { print(paste0("Binding Price: ", round((i / nrow(ticker)) * 100,2)," %")) }
   }
 
   price_list = do.call(cbind, price_list)
   price_list = na.locf(price_list)
-  colnames(price_list) = ticker[, 1]
+  colnames(price_list) = ticker[, '\uc885\ubaa9\ucf54\ub4dc']
 
   write.csv(data.frame(price_list),paste0(getwd(),"/",folder_name,".csv"))
 

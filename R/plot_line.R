@@ -1,49 +1,32 @@
-#' Plot Cumulative Return
+#' Plot Line
 #'
-#' This function plot Cumulative return
+#' This function plot Line Graph
 #'
-#' @param R Return Data
-#' @param ylog TRUE/FALSE set the y-axis to logarithmic scale
+#' @param df Data Frame
+#' @param na 'last' to lastest data, '0 to fill with 0
 #' @importFrom xts apply.yearly
 #' @importFrom dplyr mutate
 #' @importFrom tibble rownames_to_column
 #' @importFrom tidyr gather
 #' @importFrom lubridate year
 #' @importFrom ggplot2 geom_line scale_x_date
-#'
-#' @examples
-#'  \dontrun{
-#'   R = asset_data
-#'   plot_cumulative(R, ylog = TRUE)
-#'   }
 #' @export
-#'
-plot_cumulative = function(R, ylog = FALSE) {
+plot_line = function(df, na = 'last') {
 
   Date = key = value = NULL
 
-  R = as.xts(R) %>%
-    na.fill(0)
+  if (na == 'last') { df = df %>% na.locf()}
+  if (na == '0') { df = df %>% na.fill(0)}
 
-  if (ylog == FALSE) {
-    R.cum = cumprod(1 + R) - 1
-  }
-
-  if (ylog == TRUE) {
-    R = log(1 + R)
-    R.cum = cumsum(R)
-  }
-
-  R.cum = R.cum %>%
+  df = df %>%
     data.frame() %>%
     rownames_to_column(var = 'Date') %>%
     mutate(Date = as.Date(Date)) %>%
     gather(key, value, -Date) %>%
     mutate(key = factor(key, levels = unique(key)))
 
-  ggplot(R.cum, aes(x = Date, group = key, color = key)) +
+  ggplot(df, aes(x = Date, group = key, color = key)) +
     geom_line(aes(y = value)) +
-    ggtitle('Portfolio Cumulative Return') +
     xlab(NULL) +
     ylab(NULL) +
     theme_bw() +

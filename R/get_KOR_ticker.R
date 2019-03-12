@@ -175,6 +175,7 @@ get_KOR_ticker = function(src = 'krx') {
   print("Data download is complete. Data cleansing is in progress.")
 
   data = data[!grepl("\uc2a4\ud329", data[, 3]), ] # 스팩 종목 제외
+  data = data[data[,3] != "\uace8\ub4e0\ube0c\ub9bf\uc9c0\uc774\uc548\u0035\ud638", ] # 골든브릿지이안5호 제외
   data = data[substr(data[,3], nchar(data[,3]), nchar(data[,3])) != "\uc6b0", ] # 우선주 제외
   data = data[substr(data[,3], nchar(data[,3]) - 1, nchar(data[,3])) != "\uc6b0\u0042", ] # 우선주 제외
   data = data[substr(data[,3], nchar(data[,3]) - 1, nchar(data[,3])) != "\uc6b0\u0043", ] # 우선주 제외

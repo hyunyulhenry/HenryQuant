@@ -64,7 +64,7 @@ get_KOR_ticker = function(src = 'krx') {
                   add_headers(referer = gen_otp_url)) %>%
         read_html() %>% html_text() %>% read_csv()
 
-      data_value = down[, c(2, 5,7,9,11)]
+      data_value = down[, c(2, 5, 7, 9, 11)]
 
       data_value[, c(3:4)] = sapply(data_value[, c(3:4)], chr_to_numeric)
       data_value$ROE = data_value$PBR / data_value$PER
@@ -74,19 +74,16 @@ get_KOR_ticker = function(src = 'krx') {
 
     }
 
-    date = gsub("-", "", Sys.Date()-1)
+    date = get_recent_bizday()
 
-    # Finding Recent Operating Date
-    test.date = F
-
-    while (test.date == F) {
-      tryCatch({
-        down_value(date)
-        test.date = T
-      }, error = function(e) {
-        date <<- as.character(as.numeric(date) - 1)
-      })
-    }
+    # while (test.date == F) {
+    #   tryCatch({
+    #     down_value(date)
+    #     test.date = T
+    #   }, error = function(e) {
+    #     date <<- as.character(as.numeric(date) - 1)
+    #   })
+    # }
 
     down_table = list()
     down_table[[1]] = down_sector(date)

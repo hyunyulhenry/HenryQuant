@@ -18,6 +18,11 @@ devtools::install_github("hyunyulhenry/HenryQuant")
 library(HenryQuant)
 ```
 
+<<<<<<< HEAD
 ## More Information
 
 <http://henryquant.blogspot.kr/>
+=======
+http://henryquant.blogspot.kr/
+
+>>>>>>> c12b707a6a5eb07f0b4e23db00955c7730d60a52

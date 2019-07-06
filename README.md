@@ -3,7 +3,7 @@
 
 # HenryQuant
 
-<img src="data/package_symbol.png" width="120" />
+<img src="data/package_symbol.png" width="150" />
 
 ## Usage
 

@@ -34,4 +34,5 @@ Imports: xts,
     dplyr,
     ggplot2,
     tidyr,
-    stringr
+    stringr,
+    timetk

@@ -16,16 +16,16 @@ get_KOR_sector = function(src = 'wics') {
 
   # Basic information
   sector.code = c(
-    'G10', # 에너지
-    'G15', # 소재
-    'G20', # 산업재
-    'G25', # 경기관소비재
-    'G30', # 필수소비재
-    'G35', # 건강관리
-    'G40', # 금융
-    'G45', # IT
-    'G50', # 전기통신서비스
-    'G55'  # 유틸리
+    'G10',
+    'G15',
+    'G20',
+    'G25',
+    'G30',
+    'G35',
+    'G40',
+    'G45',
+    'G50',
+    'G55'
   )
 
   # Test for trading date

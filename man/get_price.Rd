@@ -19,6 +19,6 @@ It will aumomatically save individual stock prices
 }
 \examples{
 \dontrun{
- get_price(ticker = '005930', dasys = 300)
+ get_price(ticker = '005930', days = 3000)
  }
 }

@@ -19,7 +19,7 @@
 #' @importFrom timetk tk_xts
 #' @examples
 #' \dontrun{
-#'  get_price(ticker = '005930', dasys = 300)
+#'  get_price(ticker = '005930', days = 3000)
 #'  }
 #' @export
 get_price = function(ticker = "005930", days = 3000) {

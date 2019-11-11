@@ -13,6 +13,7 @@
 #' @importFrom httr GET
 #' @importFrom stringr str_replace_all
 #' @importFrom dplyr bind_rows
+#' @importFrom tibble column_to_rownames
 #'
 #' @param src Download from fn or yahoo
 #'

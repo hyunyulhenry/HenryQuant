@@ -5,7 +5,7 @@
 #' It will aumomatically save individual stock prices
 #'
 #' @param ticker symbol for stock
-#' @param days periods of days (default to 500)
+#' @param days periods of days (default to 3000)
 #'
 #' @importFrom utils write.csv
 #' @importFrom xts xts as.xts

@@ -9,7 +9,7 @@ get_price(ticker = "005930", days = 3000)
 \arguments{
 \item{ticker}{symbol for stock}
 
-\item{days}{periods of days (default to 500)}
+\item{days}{periods of days (default to 3000)}
 }
 \description{
 This function will Download all listed firm's Adjusted price in Korea Markets.

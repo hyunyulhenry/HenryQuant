@@ -26,29 +26,22 @@ get_price = function(ticker = "005930", days = 3000) {
 
   price = xts(NA, order.by = Sys.Date())
 
-      tryCatch({
-        url = paste0("https://fchart.stock.naver.com/sise.nhn?symbol="
-                     ,ticker,"&timeframe=day&count=",days,"&requestType=0")
+  url = paste0("https://fchart.stock.naver.com/sise.nhn?symbol="
+               ,ticker,"&timeframe=day&count=",days,"&requestType=0")
 
-        price = GET(url) %>%
-          read_html(encoding = 'EUC-KR') %>%
-          html_nodes("item") %>%
-          html_attr("data") %>%
-          read_delim(delim = '|')
+  price = GET(url) %>%
+    read_html(encoding = 'EUC-KR') %>%
+    html_nodes("item") %>%
+    html_attr("data") %>%
+    read_delim(delim = '|')
 
-        # price = price[c(1, 5)]
-        price = data.frame(price)
-        colnames(price) = c('Date', 'Open', 'High', 'Low', 'Close', 'Volume')
-        price[, 1] = ymd(price[, 1])
-        price = tk_xts(price)
+  # price = price[c(1, 5)]
+  price = data.frame(price)
+  colnames(price) = c('Date', 'Open', 'High', 'Low', 'Close', 'Volume')
+  price[, 1] = ymd(price[, 1])
+  price = tk_xts(price)
 
-      }, error = function(e) {
-        warning(paste0("Error in Ticker: ", ticker))
-        },
-      warning = function(w) {}
-      )
+  write.csv(data.frame(price),paste0(getwd(),"/",ticker,"_price_OHLCV.csv"))
+  paste('Downloading and saving of', ticker, 'data is completed')
 
-    write.csv(data.frame(price),paste0(getwd(),"/",ticker,"_price_OHLCV.csv"))
-    paste('Downloading and saving of', ticker, 'data is completed')
-
-    }
+  }

@@ -40,7 +40,7 @@ get_price = function(ticker = "005930", days = 3000) {
         price = data.frame(price)
         colnames(price) = c('Date', 'Open', 'High', 'Low', 'Close', 'Volume')
         price[, 1] = ymd(price[, 1])
-        price = tk_xts(price, date_var = 'Date')
+        price = tk_xts(price)
 
       }, error = function(e) {
         warning(paste0("Error in Ticker: ", ticker))
